@@ -1,0 +1,89 @@
+https://www.cnblogs.com/springbarley/archive/2012/11/03/2752984.html
+
+
+参考 ：https://www.ctolib.com/elasticsearch-php.html
+
+http://www.ruanyifeng.com/blog/2017/08/elasticsearch.html
+
+
+安装版本
+Elasticsearch-PHP Branch	PHP Version
+6.0				>= 7.0.0
+5.0				>= 5.6.6
+2.0				>= 5.4.0
+0.4, 1.0			>= 5.3.9
+
+Elasticsearch Version	Elasticsearch-PHP Branch
+>= 6.0			6.0
+>= 5.0, < 6.0		5.0
+>= 2.0, < 5.0		1.0 or 2.0
+>= 1.0, < 2.0		1.0 or 2.0
+<= 0.90.x		0.4
+
+https://www.elastic.co/downloads/past-releases/elasticsearch-2-4-4
+version-2.4.0
+https://www.elastic.co/downloads/past-releases/elasticsearch-2-4-0
+
+
+IK分词器 中文插件
+
+需要用mvn 编译
+https://codeload.github.com/medcl/elasticsearch-analysis-ik/zip/v1.10.0
+
+
+git clone https://github.com/medcl/elasticsearch-analysis-ik
+cd elasticsearch-analysis-ik
+# git checkout tags/{version}
+git checkout tags/v1.10.1
+mvn clean
+mvn compile
+mvn package
+
+pinyin分词器的下载地址: 
+https://github.com/medcl/elasticsearch-analysis-pinyin/releases/tag/v1.8.0
+
+
+
+https://github.com/medcl/elasticsearch-analysis-ik/releases/download/v1.10.6/elasticsearch-analysis-ik-1.10.6.zip
+
+
+参考文档：https://laravel-china.org/docs/elasticsearch-php/6.0
+
+https://blog.csdn.net/u013090676/article/details/79482166
+
+
+拼音+分词
+https://blog.csdn.net/napoay/article/details/53907921
+
+
+https://www.cnblogs.com/xiaoheike/p/6701256.html
+
+
+
+pinyin 使用
+https://www.cnblogs.com/xiaoheike/p/6701256.html
+
+
+export JAVA_HOME=/usr/local/jdk1.8.0_131
+export 
+export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+JAVA_HOME=/usr/local/jdk1.8.0_131
+PATH=$PATH:$JAVA_HOME/bin
+CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar
+
+export PATH JAVA_HOME CLASSPATH
+
+
+
+
+curl -XPOST http://localhost:9200/index/fulltext/_mapping -H 'Content-Type:application/json' -d'{"properties": {"content": { "type": "text","analyzer": "ik_max_word","search_analyzer": "ik_max_word"}}}'
+
+curl -XPOST http://localhost:9200/index/fulltext/4 -H 'Content-Type:application/json' -d'{"content":"中国驻洛杉矶领事馆遭亚裔男子枪击 嫌犯已自首"}'
+
+
+
+
+curl -XGET "http://localhost:9200/index/_analyze" -H 'Content-Type: application/json' -d'{"text":"中华人民共和国MN","tokenizer": "ik_max_word"}'
+
+curl -XGET "http://localhost:9200/index/_analyze" -H 'Content-Type: application/json' -d'{"text":"刘德华","tokenizer": "ik_max_word"}'
