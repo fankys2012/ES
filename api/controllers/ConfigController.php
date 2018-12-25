@@ -24,7 +24,7 @@ class ConfigController extends Controller
 
         $file = APP_DIR.'/config/rule.php';
         $arr_rules = json_decode(base64_decode($rules),true);
-        $res = file_put_contents($file,"<?php \n return ".var_export($arr_rules,true).';');
+        $res = file_put_contents($file,"<?php \n return '".serialize($arr_rules).'\';');
         if(!$res) {
             return $this->reponse(['ret'=>1,'reason'=>'write file:'.$file.' failed']);
         }

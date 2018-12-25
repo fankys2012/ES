@@ -10,6 +10,7 @@ namespace api\controllers;
 
 
 use api\logic\MediaAssetsLogic;
+use frame\Base;
 use frame\web\Controller;
 
 class MediaAssetsController extends Controller
@@ -35,6 +36,7 @@ class MediaAssetsController extends Controller
 
     public function testAction()
     {
+
         $docList = [
             'name'=>'天龙八部',
             'alias_name'=>'',
@@ -58,6 +60,42 @@ class MediaAssetsController extends Controller
 
     public function reciveAction()
     {
-
+        $post_data = Base::$app->request->getParam('post_data');
+        if(empty($post_data) || count($post_data) < 1)
+        {
+            return $this->reponse(['ret'=>1,'reason'=>'post_data is empty']);
+        }
+        $resultList = [];
+        foreach ($post_data as $item)
+        {
+            $res = null;
+            if($item['category'] == 'vod')
+            {
+                if($item['operate'] == 'update')
+                {
+                    unset($item['operate']);
+                    $res = $this->mediaAssetsLogic->updateMediaAssetDoc($item);
+                }
+                elseif($item['operate'] == 'package')
+                {
+                    $_id = md5($item['original_id'].$item['source']);
+                    $params = [
+                        'original_id'=>$item['original_id'],
+                        'source'=>$item['source'],
+                        'package'=>$item['package'],
+                        'state'=> count($item['package']) < 1 ? 0: 1,
+                    ];
+                    $res = $this->mediaAssetsLogic->mediaAsstesDocModel->editDoc($params,$_id);
+                }
+                elseif ($item['operate'] == 'delete')
+                {
+                    $_id = md5($item['original_id'].$item['source']);
+                    $res = $this->mediaAssetsLogic->mediaAsstesDocModel->delDocById($_id);
+                }
+            }
+            $res['id'] = $item['msg_id'];
+            $resultList[$item['msg_id']] = $res;
+        }
+        return $this->reponse(['ret'=>0,'reason'=>'success','data'=>$resultList]);
     }
 }

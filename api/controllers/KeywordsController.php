@@ -263,12 +263,13 @@ class KeywordsController extends Controller
         $str = "aaaa";
         $patterns = [
             "/第(.)+季/",
-            "/高清$/"
+            "/高清$/",
+            "/^(\d)+/"
         ];
         $replace = [
             "",
         ];
-        $str = "天龙八部高清a第1季";
+        $str = "a11222a天龙八部";
         $new_str = preg_replace($patterns,$replace,$str);
         echo $new_str;
 

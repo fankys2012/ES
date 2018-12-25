@@ -16,6 +16,9 @@ class ESLogic
 {
     private static $_ESInstance = null;
 
+    //@var \Elasticsearch\Client
+    private $client = null;
+
     private function __construct()
     {
 
@@ -32,14 +35,17 @@ class ESLogic
     /**
      * @return \Elasticsearch\Client
      */
-    public function connect()
+    public function connect($flush=false)
     {
-        $log_file_path = $this->logFilePath();
-        $hosts = Base::$app->params['es'];
-        $level = Base::$app->params['es_log_level'];
-        $logger = ClientBuilder::defaultLogger($log_file_path,$level);
-        $client = ClientBuilder::create()->setHosts($hosts)->setLogger($logger)->build();
-        return $client;
+        if($this->client === null || $flush == true)
+        {
+            $log_file_path = $this->logFilePath();
+            $hosts = Base::$app->params['es'];
+            $level = Base::$app->params['es_log_level'];
+            $logger = ClientBuilder::defaultLogger($log_file_path,$level);
+            $this->client = ClientBuilder::create()->setHosts($hosts)->setLogger($logger)->build();
+        }
+        return $this->client;
     }
 
     /**
