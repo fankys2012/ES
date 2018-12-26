@@ -90,10 +90,10 @@ class KeywordsController extends Controller
             }
             else {
                 $query['query']['bool']['must'][] = [
-                    'match'=>[
+                    'match_phrase'=>[
                         'name'=>[
                             'query'=>$name,
-                            'minimum_should_match'=>'100%'
+//                            'minimum_should_match'=>'100%'
                         ]
                     ]
 
@@ -260,18 +260,23 @@ class KeywordsController extends Controller
 
     public function testAction()
     {
-        $str = "aaaa";
-        $patterns = [
-            "/第(.)+季/",
-            "/高清$/",
-            "/^(\d)+/"
+        $arr = [];
+
+        $set = [
+          'query'=>[
+              'bool'=>[
+                  'match'=>[]
+              ]
+          ]
         ];
-        $replace = [
-            "",
+        $arr = $arr+$set;
+        $set2 = [
+            'query'=>[
+                'function'=>[]
+            ]
         ];
-        $str = "a11222a天龙八部";
-        $new_str = preg_replace($patterns,$replace,$str);
-        echo $new_str;
+        $arr = $arr+$set2;
+        Base::prePrint(APP_DIR);
 
 
     }

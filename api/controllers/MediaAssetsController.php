@@ -10,6 +10,7 @@ namespace api\controllers;
 
 
 use api\logic\MediaAssetsLogic;
+use api\logic\MediaAssetsSearchLogic;
 use frame\Base;
 use frame\web\Controller;
 
@@ -58,6 +59,9 @@ class MediaAssetsController extends Controller
 
     }
 
+    /**
+     * recive store data
+     */
     public function reciveAction()
     {
         $post_data = Base::$app->request->getParam('post_data');
@@ -80,8 +84,6 @@ class MediaAssetsController extends Controller
                 {
                     $_id = md5($item['original_id'].$item['source']);
                     $params = [
-                        'original_id'=>$item['original_id'],
-                        'source'=>$item['source'],
                         'package'=>$item['package'],
                         'state'=> count($item['package']) < 1 ? 0: 1,
                     ];
@@ -94,8 +96,54 @@ class MediaAssetsController extends Controller
                 }
             }
             $res['id'] = $item['msg_id'];
-            $resultList[$item['msg_id']] = $res;
+            $resultList[] = $res;
         }
         return $this->reponse(['ret'=>0,'reason'=>'success','data'=>$resultList]);
+    }
+
+    public function delAllAction()
+    {
+        $this->mediaAssetsLogic->mediaAsstesDocModel->deleteAll();
+        return $this->reponse(['ret'=>0,'reason'=>'success']);
+    }
+
+    public function searchAction()
+    {
+        $category = Base::$app->request->getParam('category','vod');
+        $name = Base::$app->request->getParam('name');
+        $from = Base::$app->request->getParam('from',0);
+        $size = Base::$app->request->getParam('size',12);
+
+        $score_func = MediaAssetsSearchLogic::funcScore($category);
+        $query = [
+            'query'=>[
+                'bool'=>[
+
+                ],
+                'functions'=>$score_func,
+                'boost_mode'=>'sum',//multiply,replace,sum,avg,max,min
+                'score_mode'=>'sum',//multiply,sum,avg,first,max,min
+
+            ],
+        ];
+        if($name) {
+            if(preg_match ("/^[A-Za-z]+$/u", $name)) {
+                $query['query']['bool']['must'][] = [
+                    'prefix'=>[
+                        'name.pinyin'=>strtolower($name)
+                    ]
+                ];
+            }
+            else {
+                $query['query']['bool']['must'][] = [
+                    'match_phrase'=>[
+                        'name'=>[
+                            'query'=>$name,
+                        ]
+                    ]
+                ];
+            }
+        }
+        //媒资包筛选
     }
 }

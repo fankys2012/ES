@@ -87,4 +87,24 @@ class Application extends \frame\base\Application
             'response' => ['class' => 'frame\web\Response'],
         ]);
     }
+
+    /**
+     * get value from $params
+     * @param array $params
+     * @param string $name
+     * @param null $defaultValue
+     * @return null|string
+     */
+    public function getParam(&$params,$name,$defaultValue=null)
+    {
+        if(isset($params[$name])) {
+            if(is_string($params[$name]) && strlen($params[$name]) >0) {
+                return trim($params[$name]);
+            }
+            elseif (is_array($params[$name])) {
+                return $params[$name];
+            }
+        }
+        return $defaultValue;
+    }
 }

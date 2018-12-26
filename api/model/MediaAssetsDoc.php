@@ -9,6 +9,8 @@
 namespace api\model;
 
 
+use frame\Base;
+
 class MediaAssetsDoc
 {
     const INDEXNAME = 'mediaassets';
@@ -290,5 +292,58 @@ class MediaAssetsDoc
         }
 
         return ['ret'=>0,'reason'=>'success'];
+    }
+
+    public function getAddFieldData(&$params)
+    {
+        $fieldData = [
+            'name'=>Base::$app->getParam($params,'name',''),
+            'alias_name'=>Base::$app->getParam($params,'alias_name',''),
+            'summary'=>Base::$app->getParam($params,'summary',''),
+            'director'=>Base::$app->getParam($params,'director',[]),
+            'actor'=>Base::$app->getParam($params,'actor',[]),
+            //上线媒资包栏目
+            'package'=>Base::$app->getParam($params,'package',[]),
+            //影片类型 nns_view_type [电影、综艺....]
+            'asset_type'   => Base::$app->getParam($params,'asset_type',''),
+
+            'category'     => Base::$app->getParam($params,'category','vod'),//分类 vod:点播媒资，special：专题
+            'weight'       => Base::$app->getParam($params,'weight',1),//权重
+            't_click'      => Base::$app->getParam($params,'t_click',1),//总点击数
+            'state'        => Base::$app->getParam($params,'state',1),//状态 1：启用 0：禁用
+            'oned_click'   => Base::$app->getParam($params,'oned_click',1),//1日点击量
+            'sd_click'     => Base::$app->getParam($params,'sd_click',1),//7日点击量
+            'sd_avg_click' => Base::$app->getParam($params,'sd_avg_click',1),//7日日均点击量
+            'fth_click'    => Base::$app->getParam($params,'fth_click',1),//15日点击量
+            'fth_agv_click'=> Base::$app->getParam($params,'fth_agv_click',1),//15日日均点击量
+            'm_click'      => Base::$app->getParam($params,'m_click',1),//30日点击量
+            'm_agv_click'  => Base::$app->getParam($params,'m_agv_click',1),//30日日均点击量
+            'create_time'  => Base::$curr_date_time, //创建时间
+            'modify_time'  => Base::$curr_date_time,//修改时间
+            'original_id'  => Base::$app->getParam($params,'original_id'),//原始ID
+            'source'       => Base::$app->getParam($params,'source','cms'),//数据来源
+        ];
+        return $fieldData;
+    }
+
+    /**
+     * 删除所有数据 -- 测试使用 上线后禁用
+     */
+    public function deleteAll()
+    {
+        $params = [
+            'index' =>self::INDEXNAME,
+            'type'  =>self::MAPPINGNAME,
+            'body'=>[
+                "query"=>[
+                    'match_all'=>new \stdClass(),
+                ],
+            ],
+
+            'client'=>[
+                'ignore'=>'404'
+            ],
+        ];
+        $this->escliend->deleteByQuery($params);
     }
 }

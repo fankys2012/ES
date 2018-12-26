@@ -9,7 +9,6 @@
 namespace api\logic;
 
 
-use api\model\KeywordsModel;
 use api\model\MediaAssetsDoc;
 use frame\Base;
 
@@ -54,7 +53,7 @@ class MediaAssetsLogic
 
         $_id = md5($params['original_id'].$params['source']);
         //若媒资包栏目未空 则表示未上线，未上线的数据状态置为不可用状态
-        if(count($params['package']) <1) {
+        if(!isset($params['package']) || count($params['package']) <1) {
             $params['state'] = 0;
         }
         else {
@@ -67,9 +66,8 @@ class MediaAssetsLogic
             $result = $this->mediaAsstesDocModel->editDoc($params,$_id);
         }
         else {
-            $params['modify_time'] = Base::$curr_date_time;
-            $params['create_time'] = Base::$curr_date_time;
-            $result = $this->mediaAsstesDocModel->addDoc($params,$_id);
+            $fieldData = $this->mediaAsstesDocModel->getAddFieldData($params);
+            $result = $this->mediaAsstesDocModel->addDoc($fieldData,$_id);
         }
         //创建关键词
         $this->createVodMediaAssetsKeywords($params);
