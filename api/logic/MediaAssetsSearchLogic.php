@@ -81,6 +81,10 @@ class MediaAssetsSearchLogic
         return $score;
     }
 
+    /**
+     * @param $name
+     * @return array
+     */
     public static function boolMatch($name)
     {
         if(empty($name)) {
@@ -89,20 +93,54 @@ class MediaAssetsSearchLogic
         if(preg_match ("/^[A-Za-z]+$/u", $name)) {
             $bool = [
                 'should'=>[
-                    ['prefix'=>[
-                        'name.pinyin'=>strtolower($name)
-                    ]]
+                    [
+                        'prefix'=>[
+                            'name.pinyin'=>strtolower($name)
+                        ]
+                    ],
+                    [
+                        'prefix'=>[
+                            'alias_name.pinyin'=>strtolower($name)
+                        ]
+                    ],
+                    [
+                        'prefix'=>[
+                            'director.name.pinyin'=>strtolower($name)
+                        ]
+                    ],
+                    [
+                        'prefix'=>[
+                            'actor.name.pinyin'=>strtolower($name)
+                        ]
+                    ]
+
                 ]
             ];
 
         }
         else {
             $bool = [
-                'should'=>[
-                    ['match_phrase'=>[
+                'should'=> [
+                    ['match_phrase_prefix'=> [
                         'name'=>$name
-                    ]],
-
+                    ]
+                    ],
+                    ['match_phrase'=> [
+                        'director.name'=>$name
+                    ]
+                    ],
+                    ['match_phrase'=> [
+                        'actor.name'=>$name
+                    ]
+                    ],
+                    ['match_phrase_prefix'=> [
+                        'alias_name'=>$name
+                    ]
+                    ],
+                    ['match_phrase_prefix'=> [
+                        'summary'=>$name
+                    ]
+                    ],
                 ]
             ];
 

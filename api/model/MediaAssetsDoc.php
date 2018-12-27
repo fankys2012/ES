@@ -178,6 +178,8 @@ class MediaAssetsDoc
                         'modify_time'  =>['type'=>'keyword'],//修改时间
                         'original_id'  =>['type'=>'keyword'],//原始ID
                         'source'       =>['type'=>'keyword'],//数据来源
+                        'cp_id'        =>['type'=>'keyword'],
+                        'epg_tag'      =>['type'=>'keyword'],//终端类型
                     ]
                 ]
             ],
@@ -322,7 +324,51 @@ class MediaAssetsDoc
             'modify_time'  => Base::$curr_date_time,//修改时间
             'original_id'  => Base::$app->getParam($params,'original_id'),//原始ID
             'source'       => Base::$app->getParam($params,'source','cms'),//数据来源
+            'cp_id'        => Base::$app->getParam($params,'cp_id',''),
+            'epg_tag'      => Base::$app->getParam($params,'epg_tag',''),//终端类型
         ];
+        return $fieldData;
+    }
+
+    public function getEditFieldsData(&$params)
+    {
+        $fieldData = [];
+
+        $allowFields = [
+            'name'=>"",
+            'alias_name'=>"",
+            'summary'=>"",
+            'director'=>[],
+            'actor'=>[],
+            'package'=>[],
+            'asset_type'=>"",
+            'weight'=>1,
+            't_click'=>1,
+            'state'=>1,
+            'oned_click'=>1,
+            'sd_click'=>1,
+            'sd_avg_click'=>1,
+            'fth_click'=>1,
+            'fth_agv_click'=>1,
+            'm_click'=>1,
+            'm_agv_click'=>1,
+            'cp_id'=>"",
+            'epg_tag'=>"",
+            'modify_time'=>Base::$curr_date_time
+        ];
+        foreach ($allowFields as $key => $val) {
+            if(isset($params[$key])) {
+                if(is_string($params[$key]) && strlen($params[$key]) >0) {
+                    $fieldData[$key] = trim($params[$key]);
+                }
+                elseif (is_array($params[$key])) {
+                    $fieldData[$key] = $params[$key];
+                }
+                else {
+                    $fieldData[$key] = $val;
+                }
+            }
+        }
         return $fieldData;
     }
 
@@ -345,5 +391,41 @@ class MediaAssetsDoc
             ],
         ];
         $this->escliend->deleteByQuery($params);
+    }
+
+    public function getList($query,$from=0,$size=12)
+    {
+        $params = [
+            'index' =>self::INDEXNAME,
+            'type'  =>self::MAPPINGNAME,
+            'size'  =>$size,
+            'from'  =>$from,
+            'body'  => $query,
+            'client'=>[
+                'ignore'=>'404'
+            ],
+        ];
+        $result = $this->escliend->search($params);
+        if($result['hits'])
+        {
+            $list = [];
+            foreach ($result['hits']['hits'] as $item)
+            {
+                $data = $item['_source'];
+                $data['id'] = $item['_id'];
+                $list[] = $data;
+                unset($data);
+            }
+            return [
+                'ret'=>0,
+                'reason'=>'success',
+                'data'=>[
+                    'total'=>$result['hits']['total'],
+                    'list'=>$list
+                ]
+            ];
+        }
+        return ['ret'=>1,'reason'=>'not found'];
+
     }
 }

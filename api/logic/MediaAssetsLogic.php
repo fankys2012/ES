@@ -63,14 +63,21 @@ class MediaAssetsLogic
         $exists = $this->mediaAsstesDocModel->getDocById($_id);
         if($exists['ret'] == 0 && $exists['data']['_id']) {
             $params['modify_time'] = Base::$curr_date_time;
-            $result = $this->mediaAsstesDocModel->editDoc($params,$_id);
+            $fieldData = $this->mediaAsstesDocModel->getEditFieldsData($params);
+            $result = $this->mediaAsstesDocModel->editDoc($fieldData,$_id);
         }
         else {
             $fieldData = $this->mediaAsstesDocModel->getAddFieldData($params);
             $result = $this->mediaAsstesDocModel->addDoc($fieldData,$_id);
         }
         //创建关键词
-        $this->createVodMediaAssetsKeywords($params);
+        if($params['category'] =='vod') {
+            $this->createVodMediaAssetsKeywords($params);
+        }
+        else if($params['category'] =='star') {
+            $kres = $this->createKeywords($params['name'],'star',$params['original_id'],$params['source'],1);
+        }
+
         return $result;
 
     }
@@ -149,6 +156,15 @@ class MediaAssetsLogic
     }
 
 
+    /**
+     * 创建关键词
+     * @param $name
+     * @param $category
+     * @param $originalId
+     * @param string $source
+     * @param int $cites
+     * @return array
+     */
     protected function createKeywords($name,$category,$originalId,$source='cms',$cites=0)
     {
         if($originalId) {
@@ -189,6 +205,12 @@ class MediaAssetsLogic
             return $this->keywordsLogic->addKeywords($params,$_id);
         }
 
+    }
+
+    public function getList($query,$from,$size)
+    {
+        $result = $this->mediaAsstesDocModel->getList($query,$from,$size);
+        return $result;
     }
 
 }
