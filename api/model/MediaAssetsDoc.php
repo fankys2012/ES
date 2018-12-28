@@ -80,6 +80,10 @@ class MediaAssetsDoc
         return ['ret'=>0,'reason'=>'success'];
     }
 
+    /**
+     * TODO mapping 定义
+     * @return array
+     */
     public function createMapping()
     {
         $params = [

@@ -9,6 +9,8 @@
 namespace api\model;
 
 
+use frame\Base;
+
 class KeywordsModel
 {
     //var \Elasticsearch\Client
@@ -131,6 +133,61 @@ class KeywordsModel
         ];
         $res = $this->escliend->indices()->getMapping($params);
         return $res;
+    }
+
+    /**
+     * 删除所有数据 -- 测试使用 上线后禁用
+     */
+    public function deleteAll()
+    {
+        $params = [
+            'index' =>self::INDEXNAME,
+            'type'  =>self::MAPPINGNAME,
+            'body'=>[
+                "query"=>[
+                    'match_all'=>new \stdClass(),
+                ],
+            ],
+
+            'client'=>[
+                'ignore'=>'404'
+            ],
+        ];
+        $this->escliend->deleteByQuery($params);
+    }
+
+    /**
+     * 添加关键词文档字段
+     * @param string $name      关键词名称
+     * @param string $category   分类
+     * @param int    $state        状态
+     * @param string $originalId 原始id
+     * @param string $source
+     * @param int $cites         引用数
+     * @return array
+     */
+    public static function getAddFieldData($name,$category,$state=1,$originalId,$source='cms',$cites=0)
+    {
+        $params = array(
+            'name'         => $name,
+            'category'     => [$category],
+            'weight'       => 1,//权重
+            'state'        => $state,//状态 1：启用 0：禁用
+            't_click'      => 1,//总点击数
+            'oned_click'   => 1,//1日点击量
+            'sd_click'     => 1,//7日点击量
+            'sd_avg_click' => 1,//7日日均点击量
+            'fth_click'    => 1,//15日点击量
+            'fth_agv_click'=> 1,//15日日均点击量
+            'm_click'      => 1,//30日点击量
+            'm_agv_click'  => 1,//30日日均点击量
+            'create_time'  => Base::$curr_date_time, //创建时间
+            'modify_time'  => Base::$curr_date_time,//修改时间
+            'original_id'  => $originalId,
+            'source'       => $source,
+            'cites_counter'=> $cites,
+        );
+        return $params;
     }
 
 }

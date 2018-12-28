@@ -14,6 +14,7 @@ use api\logic\KeywordsLogic;
 use api\model\KeywordsModel;
 use frame\Base;
 use frame\web\Controller;
+use api\logic\MediaAssetsSearchLogic;
 
 class KeywordsController extends Controller
 {
@@ -258,26 +259,53 @@ class KeywordsController extends Controller
         return $this->reponse($data);
     }
 
-    public function testAction()
+    public function delAllAction()
     {
-        $arr = [];
+        $this->_keywordsModel->deleteAll();
+        return $this->reponse(['ret'=>0,'reason'=>'success']);
+    }
 
-        $set = [
-          'query'=>[
-              'bool'=>[
-                  'match'=>[]
-              ]
-          ]
+    public function searchAction()
+    {
+        $category = Base::$app->request->getParam('category');
+        $name = Base::$app->request->getParam('name');
+        $from = Base::$app->request->getParam('from',0);
+        $size = Base::$app->request->getParam('size',12);
+        if(empty($name)){
+            return $this->reponse(['ret'=>1,'reason'=>'params name can not empty']);
+        }
+        $filterParams = [
+            'state'     => 1,
+            'category'  =>$category,
         ];
-        $arr = $arr+$set;
-        $set2 = [
+
+        $queryBool = [];
+        $score_func = MediaAssetsSearchLogic::funcScore($category,'keywords');
+        if($name) {
+            $queryBool = MediaAssetsSearchLogic::keywordsBoolMatch($name);
+        }
+        $filterBool = MediaAssetsSearchLogic::boolFilter($filterParams);
+        if($filterBool) {
+            $queryBool = array_merge($queryBool,$filterBool);
+        }
+
+        $query = [
+            '_source'=>[
+                'includes'=>['name','original_id','category']
+            ],
             'query'=>[
-                'function'=>[]
+                'function_score'=>[
+                    'query'=>[
+                        'bool'=>$queryBool,
+                    ],
+                    'functions'=>$score_func,
+                    'boost_mode'=>'sum',//multiply,replace,sum,avg,max,min
+                    'score_mode'=>'sum',//multiply,sum,avg,first,max,min
+                ],
             ]
         ];
-        $arr = $arr+$set2;
-        Base::prePrint(APP_DIR);
 
-
+        $result = $this->_keywordsLogic->getList($query,$from,$size);
+        $this->reponse($result);
     }
 }

@@ -81,20 +81,36 @@ class MediaAssetsController extends Controller
         return $this->reponse(['ret'=>0,'reason'=>'success']);
     }
 
+    /**
+     * 内容搜索
+     */
     public function searchAction()
     {
-        $category = Base::$app->request->getParam('category','vod');
+        $category = Base::$app->request->getParam('category');
         $name = Base::$app->request->getParam('name');
         $from = Base::$app->request->getParam('from',0);
         $size = Base::$app->request->getParam('size',12);
 
-        $score_func = MediaAssetsSearchLogic::funcScore($category);
+        $filterParams = [
+            'state'     =>Base::$app->request->getParam('state'),
+            'category'  =>$category,
+            'asset_type'=>Base::$app->request->getParam('asset_type'),
+            'cp_id'     =>Base::$app->request->getParam('cp_id')
+        ];
+
+        $queryBool = [];
+        $score_func = MediaAssetsSearchLogic::funcScore($category,'search');
         if($name) {
             $queryBool = MediaAssetsSearchLogic::boolMatch($name);
         }
+        $filterBool = MediaAssetsSearchLogic::boolFilter($filterParams);
+        if($filterBool) {
+            $queryBool = array_merge($queryBool,$filterBool);
+        }
+
         $query = [
             '_source'=>[
-                'includes'=>['name','original_id','asset_type','category']
+                'includes'=>['name','original_id','asset_type','category','t_click']
             ],
             'query'=>[
                 'function_score'=>[

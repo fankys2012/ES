@@ -13,71 +13,62 @@ class MediaAssetsSearchLogic
 {
     /**
      * 查询socre
-     * @param null $factorType
+     * @param string $factorType 类型
+     * @param string $kind       search/keywords
      * @return array
      */
-    public static function funcScore($factorType=null)
+    public static function funcScore($factorType=null,$kind='search')
     {
         $conf = require APP_DIR.'/config/weight.php';
         $factorType = $factorType ?: 'vod';
         if(isset($conf['search'][$factorType])) {
-            $conf = $conf['search'][$factorType];
+            $conf = $conf[$kind][$factorType];
         }
         else {
             $conf = [];
         }
-
-        $score = [
-            [
-                'field_value_factor'=>[
-                    'field'=>'oned_click',
-                    'modifier'=>'log1p',//Add 1 to the field value and take the common logarithm
-                    'factor'=>isset($conf['oned_click']) ? $conf['oned_click'] : 0,
-                ]
+        $arr_fields = [
+            'oned_click'=>[
+                'field'=>'oned_click',
+                'modifier'=>'log1p'
             ],
-            [
-                'field_value_factor'=>[
-                    'field'=>'sd_click',//7日点击量
-                    'modifier'=>'log1p',
-                    'factor'=>isset($conf['sd_click']) ? $conf['sd_click'] : 0,
-                ]
+            'sd_click'=>[
+                'field'=>'sd_click',
+                'modifier'=>'log1p'
             ],
-            [
-                'field_value_factor'=>[
-                    'field'=>'sd_avg_click',//7日日均点击量
-                    'modifier'=>'log1p',
-                    'factor'=>isset($conf['sd_avg_click']) ? $conf['sd_avg_click'] : 0,
-                ]
+            'sd_avg_click'=>[
+                'field'=>'sd_avg_click',
+                'modifier'=>'log1p'
             ],
-            [
-                'field_value_factor'=>[
-                    'field'=>'fth_click',//15日点击量
-                    'modifier'=>'log1p',
-                    'factor'=>isset($conf['fth_click']) ? $conf['fth_click'] : 0,
-                ]
+            'fth_click'=>[
+                'field'=>'fth_click',
+                'modifier'=>'log1p'
             ],
-            [
-                'field_value_factor'=>[
-                    'field'=>'fth_agv_click',//15日日均点击量
-                    'modifier'=>'log1p',
-                    'factor'=>isset($conf['fth_agv_click']) ? $conf['fth_agv_click'] : 0,
-                ]
+            'fth_agv_click'=>[
+                'field'=>'fth_agv_click',
+                'modifier'=>'log1p'
             ],
-            [
-                'field_value_factor'=>[
-                    'field'=>'m_click',//30日点击量
-                    'modifier'=>'log1p',
-                    'factor'=>isset($conf['m_click']) ? $conf['m_click'] : 0,
-                ]
+            'field_value_factor'=>[
+                'field'=>'field_value_factor',
+                'modifier'=>'log1p'
             ],
-            [
-                'field_value_factor'=>[
-                    'field'=>'m_agv_click',//30日日均点击量
-                    'modifier'=>'log1p',
-                    'factor'=>isset($conf['m_agv_click']) ? $conf['m_agv_click'] : 0,
-                ]
-            ]
+            'm_agv_click'=>[
+                'field'=>'m_agv_click',
+                'modifier'=>'log1p'
+            ],
         ];
+        $score = [];
+        foreach ($arr_fields as $key => $item)
+        {
+            if(isset($conf[$key]) && $conf[$key] != '0')
+            $score[] = [
+                'field_value_factor'=>[
+                    'field'=>$item['field'],//15日点击量
+                    'modifier'=>$item['modifier'],
+                    'factor'=>$conf[$key],
+                ]
+            ];
+        }
         return $score;
     }
 
@@ -141,6 +132,102 @@ class MediaAssetsSearchLogic
                         'summary'=>$name
                     ]
                     ],
+                ]
+            ];
+
+        }
+        return $bool;
+    }
+
+    public static function boolFilter($params)
+    {
+        //分类过滤
+        if(isset($params['category']) && $params['category']) {
+            $bool['must'][] = [
+                'term'=>[
+                    'category'=>$params['category']
+                ]
+            ];
+        }
+        //状态过滤
+        if(isset($params['state']) && $params['state']) {
+            $bool['must'][] = [
+                'term'=>[
+                    'state'=>$params['state']
+                ]
+            ];
+        }
+        //媒资类型过滤
+        if(isset($params['asset_type']) && $params['asset_type']) {
+            $bool['must'][] = [
+                'term'=>[
+                    'asset_type'=>$params['asset_type']
+                ]
+            ];
+        }
+        //cp过滤
+        if(isset($params['cp_id']) && strlen($params['cp_id'])>0) {
+            $arr_cp_id = explode(',',$params['cp_id']);
+            if(count($arr_cp_id) >1){
+                $bool['must'][] = [
+                    'terms'=>[
+                        'cp_id'=>$arr_cp_id
+                    ]
+                ];
+            }
+            else {
+                $bool['must'][] = [
+                    'term'=>[
+                        'cp_id'=>$params['cp_id']
+                    ]
+                ];
+            }
+
+        }
+        //EGP tag 过滤
+//        if(isset($params['epg_tag']) && $params['epg_tag']) {
+//            $bool['should'][] = [
+//                'term'=>[
+//                    'epg_tag'=>$params['epg_tag']
+//                ]
+//            ];
+//        }
+
+        return ['filter'=>[
+            'bool'=>$bool,
+        ]];
+    }
+
+
+    /**
+     * 关键词查询
+     * @param $name
+     * @return array
+     */
+    public static function keywordsBoolMatch($name)
+    {
+        if(empty($name)) {
+            return [];
+        }
+        if(preg_match ("/^[A-Za-z]+$/u", $name)) {
+            $bool = [
+                'should'=>[
+                    [
+                        'prefix'=>[
+                            'name.pinyin'=>strtolower($name)
+                        ]
+                    ]
+                ]
+            ];
+
+        }
+        else {
+            $bool = [
+                'should'=> [
+                    ['match_phrase_prefix'=> [
+                        'name'=>$name
+                    ]
+                    ]
                 ]
             ];
 

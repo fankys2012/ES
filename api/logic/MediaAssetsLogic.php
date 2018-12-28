@@ -9,6 +9,7 @@
 namespace api\logic;
 
 
+use api\model\KeywordsModel;
 use api\model\MediaAssetsDoc;
 use frame\Base;
 
@@ -165,7 +166,7 @@ class MediaAssetsLogic
      * @param int $cites
      * @return array
      */
-    protected function createKeywords($name,$category,$originalId,$source='cms',$cites=0)
+    protected function createKeywords($name,$category,$originalId,$source='cms',$cites=0,$state=1)
     {
         if($originalId) {
             $_id = md5($originalId.$source);
@@ -192,16 +193,7 @@ class MediaAssetsLogic
             }
         }
         else{
-            $params = array(
-                'name'         => $name,
-                'category'     => [$category],
-                'state'        => 1,//状态 1：启用 0：禁用
-                'create_time'  => Base::$curr_date_time, //创建时间
-                'modify_time'  => Base::$curr_date_time,//修改时间
-                'original_id'  => $originalId,
-                'source'       => $source,
-                'cites_counter'=> $cites,
-            );
+            $params = KeywordsModel::getAddFieldData($name,$category,$state,$originalId,$source,$cites);
             return $this->keywordsLogic->addKeywords($params,$_id);
         }
 
