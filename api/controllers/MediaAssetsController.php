@@ -128,6 +128,9 @@ class MediaAssetsController extends Controller
 //        return $this->reponse($query);
 
         //媒资包筛选
+        $aggsField = ['category','asset_type'];
+        $aggs = MediaAssetsSearchLogic::assetsAggs($aggsField);
+        $query['aggs'] = $aggs;
 
         $result = $this->mediaAssetsLogic->getList($query,$from,$size);
 

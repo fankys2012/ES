@@ -409,6 +409,7 @@ class MediaAssetsDoc
                 'ignore'=>'404'
             ],
         ];
+
         $result = $this->escliend->search($params);
         if($result['hits'])
         {
@@ -425,7 +426,8 @@ class MediaAssetsDoc
                 'reason'=>'success',
                 'data'=>[
                     'total'=>$result['hits']['total'],
-                    'list'=>$list
+                    'list'=>$list,
+                    'aggs'=>isset($result['aggregations']) ? $result['aggregations']:null,
                 ]
             ];
         }

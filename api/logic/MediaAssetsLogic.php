@@ -202,6 +202,21 @@ class MediaAssetsLogic
     public function getList($query,$from,$size)
     {
         $result = $this->mediaAsstesDocModel->getList($query,$from,$size);
+        if($result['data']['aggs'] && is_array($result['data']['aggs'])) {
+            $aggs = [];
+            foreach ($result['data']['aggs'] as $key => $value) {
+                foreach ($value['buckets'] as $item) {
+                    if(empty($item['key'])) {
+                        continue;
+                    }
+                    $aggs[$key][] = [
+                        'name'=>$item['key'],
+                        'count'=>$item['doc_count'],
+                    ];
+                }
+            }
+            $result['data']['aggs'] = $aggs;
+        }
         return $result;
     }
 

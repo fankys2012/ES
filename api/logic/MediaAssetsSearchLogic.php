@@ -234,4 +234,24 @@ class MediaAssetsSearchLogic
         }
         return $bool;
     }
+
+    /**
+     * 按给定字段聚合
+     * @param array $aggFields  聚合字段
+     * @return array ['aggfield'=>['terms'=>[...]]]
+     */
+    public static function assetsAggs($aggFields)
+    {
+        $aggs = [];
+        if(is_array($aggFields)) {
+            foreach ($aggFields as $item) {
+                $aggs[$item] = [
+                    'terms'=>[
+                        'field'=>$item,
+                    ]
+                ];
+            }
+        }
+        return $aggs;
+    }
 }
