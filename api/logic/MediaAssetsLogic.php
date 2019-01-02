@@ -54,10 +54,10 @@ class MediaAssetsLogic
 
         $_id = md5($params['original_id'].$params['source']);
         //若媒资包栏目未空 则表示未上线，未上线的数据状态置为不可用状态
-        if(!isset($params['package']) || count($params['package']) <1) {
+        if(isset($params['package']) && count($params['package']) <1) {
             $params['state'] = 0;
         }
-        else {
+        elseif(isset($params['package']) && count($params['package']) >0) {
             $params['state'] = 1;
         }
 
@@ -199,6 +199,13 @@ class MediaAssetsLogic
 
     }
 
+    /**
+     * 搜索列表
+     * @param array $query
+     * @param integer $from
+     * @param integer $size
+     * @return array
+     */
     public function getList($query,$from,$size)
     {
         $result = $this->mediaAsstesDocModel->getList($query,$from,$size);
@@ -220,4 +227,32 @@ class MediaAssetsLogic
         return $result;
     }
 
+    /**
+     * 点击数更新
+     * @param $params
+     * @return array
+     */
+    public function updateMediaAssetsClicks($params)
+    {
+        if(!isset($params['original_id']) || empty($params['original_id'])) {
+            return ['ret'=>1,'reason'=>'params original_id can not empty'];
+        }
+
+        if(!isset($params['source']) || empty($params['source'])) {
+            $params['source'] = 'cms';
+        }
+
+        $_id = md5($params['original_id'].$params['source']);
+
+        $exists = $this->mediaAsstesDocModel->getDocById($_id);
+        if($exists['ret'] == 0 && $exists['data']['_id']) {
+            $params['modify_time'] = Base::$curr_date_time;
+            $fieldData = $this->mediaAsstesDocModel->getEditFieldsData($params);
+            $result = $this->mediaAsstesDocModel->editDoc($fieldData,$_id);
+        }
+        else {
+            return ['ret'=>1,'reason'=>'media assets not found'];
+        }
+        return $result;
+    }
 }

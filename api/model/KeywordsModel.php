@@ -190,4 +190,21 @@ class KeywordsModel
         return $params;
     }
 
+    /**
+     * 获取更新点击数字段信息
+     * @param $params
+     * @return array
+     */
+    public static function getClickFieldData(&$params)
+    {
+        $fieldData = [];
+        $allowFields = ['weight','t_click','oned_click','sd_click','sd_avg_click','fth_click','fth_agv_click','m_click','m_agv_click'];
+        foreach ($allowFields as $key) {
+            if(isset($params[$key])) {
+                $fieldData[$key] = intval($params[$key]);
+            }
+        }
+        return $fieldData;
+    }
+
 }

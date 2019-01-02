@@ -157,10 +157,10 @@ class MediaAssetsDoc
                         'package'=>[
                             'properties'=>[
                                 'asset_id'=>[
-                                    'type'=>'text'
+                                    'type'=>'keyword'
                                 ],
                                 'cate_id'=>[
-                                    'type'=>'text'
+                                    'type'=>'keyword'
                                 ],
                             ],
                         ],

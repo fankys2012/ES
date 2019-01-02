@@ -238,4 +238,39 @@ class KeywordsLogic
         return ['ret'=>0,'data'=>$returnList];
     }
 
+
+    /**
+     * 更新关键词点击数
+     * @param array $params
+     * @return array
+     */
+    public function updateClick(&$params)
+    {
+        //类型
+        $category = $params['category'] ?: 'vod';
+        $original_id = $params['original_id'];
+        $soruce = $params['soruce'] ?: 'cms';
+
+        if($category == 'star') {
+            if(empty($original_id)) {
+                return ['ret'=>1,'reason'=>'original_id can not empty'];
+            }
+            $id = md5($original_id.$soruce);
+        }
+        else {
+            $id = md5($params['name']);
+        }
+
+        $exist = $this->getById($id);
+        if($exist['ret'] == 0) {
+            $fieldsData = KeywordsModel::getClickFieldData($params);
+
+            $result = $this->updateKeywords($id,$fieldsData);
+
+            return $result;
+        }
+        else {
+            return ['ret'=>1,'reason'=>'keywords not found'];
+        }
+    }
 }
