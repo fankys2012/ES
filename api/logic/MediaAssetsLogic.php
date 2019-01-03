@@ -94,7 +94,6 @@ class MediaAssetsLogic
             $params['kw_cites'] = array_unique($params['kw_cites']);
         }
         $qeresult = $this->keywordsUpdateQueue($params['kw_cites']);
-        var_export($qeresult);
 
         return $result;
 
