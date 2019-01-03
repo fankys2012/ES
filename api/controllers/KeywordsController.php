@@ -108,6 +108,7 @@ class KeywordsController extends Controller
 
     public function editAction()
     {
+        exit;
         $name = Base::$app->request->getParam('name');
         $id = Base::$app->request->getParam('id');
         $weight = Base::$app->request->getParam('weight');
@@ -172,6 +173,7 @@ class KeywordsController extends Controller
 
     public function addAction()
     {
+        exit;
         $date = date('Y-m-d H:i:s',time());
         //类型
         $category = Base::$app->request->getParam('category','vod');

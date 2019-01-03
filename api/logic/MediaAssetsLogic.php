@@ -11,6 +11,7 @@ namespace api\logic;
 
 use api\model\KeywordsModel;
 use api\model\MediaAssetsDoc;
+use api\util\CacheRedis;
 use frame\Base;
 
 class MediaAssetsLogic
@@ -20,6 +21,11 @@ class MediaAssetsLogic
     public $mediaAsstesDocModel = null;
 
     protected $keywordsLogic = null;
+
+    /*
+     * 媒资关联关键词_id 列表
+     */
+    protected $keywordsList = [];
 
     //var 关键词清洗规则
     protected $rinse_rule = null;
@@ -54,7 +60,7 @@ class MediaAssetsLogic
 
         $_id = md5($params['original_id'].$params['source']);
         //若媒资包栏目未空 则表示未上线，未上线的数据状态置为不可用状态
-        if(isset($params['package']) && count($params['package']) <1) {
+        if(!isset($params['package']) || count($params['package']) <1) {
             $params['state'] = 0;
         }
         elseif(isset($params['package']) && count($params['package']) >0) {
@@ -62,6 +68,17 @@ class MediaAssetsLogic
         }
 
         $exists = $this->mediaAsstesDocModel->getDocById($_id);
+
+        //创建关键词
+        $this->keywordsList = [];
+        if($params['category'] =='vod') {
+            $this->createVodMediaAssetsKeywords($params);
+        }
+        else if($params['category'] =='star') {
+            $kres = $this->createKeywords($params['name'],'star',$params['original_id'],$params['source'],1);
+        }
+        $params['kw_cites'] = $this->keywordsList;
+
         if($exists['ret'] == 0 && $exists['data']['_id']) {
             $params['modify_time'] = Base::$curr_date_time;
             $fieldData = $this->mediaAsstesDocModel->getEditFieldsData($params);
@@ -71,13 +88,13 @@ class MediaAssetsLogic
             $fieldData = $this->mediaAsstesDocModel->getAddFieldData($params);
             $result = $this->mediaAsstesDocModel->addDoc($fieldData,$_id);
         }
-        //创建关键词
-        if($params['category'] =='vod') {
-            $this->createVodMediaAssetsKeywords($params);
+        //关键词更新队列
+        if(isset($exists['kw_cites']) && $exists['kw_cites']) {
+            $params['kw_cites'] = array_merge($params['kw_cites'],$exists['kw_cites']);
+            $params['kw_cites'] = array_unique($params['kw_cites']);
         }
-        else if($params['category'] =='star') {
-            $kres = $this->createKeywords($params['name'],'star',$params['original_id'],$params['source'],1);
-        }
+        $qeresult = $this->keywordsUpdateQueue($params['kw_cites']);
+        var_export($qeresult);
 
         return $result;
 
@@ -175,6 +192,9 @@ class MediaAssetsLogic
             $_id = md5($name);
         }
         $exists = $this->keywordsLogic->getById($_id);
+        if($category != 'star') {
+            $this->keywordsList[] = $_id;
+        }
 
         if($exists['ret'] ==0 && $exists['data']['_id'] ) {
             //如果明星 且存在则不更新
@@ -254,5 +274,31 @@ class MediaAssetsLogic
             return ['ret'=>1,'reason'=>'media assets not found'];
         }
         return $result;
+    }
+
+    /**
+     * 关键词更新队列
+     * @param array $keywordsList = ['关键词ID1','关键词ID2']
+     * @return array
+     */
+    public function keywordsUpdateQueue($keywordsList)
+    {
+        if(empty($keywordsList)) {
+            return ['ret'=>0,'reason'=>'keywords empty'];
+        }
+        $redisClient = CacheRedis::getInstance();
+        if(!$redisClient) {
+            return ['ret'=>1,'reason'=>'redis connect failed'];
+        }
+        $key = 'qe:update_keywords_list';
+        foreach ($keywordsList as $item) {
+            $score = $redisClient->zscore($key,$item);
+            if($score) {
+                continue;
+            }
+            $redisClient->zAdd($key,time(),$item);
+        }
+        return ['ret'=>0,'reason'=>'success'];
+
     }
 }

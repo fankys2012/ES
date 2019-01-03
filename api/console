@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+
+require_once (__DIR__ . '/../vendor/autoload.php');
+require_once (__DIR__ . '/../vendor/frame/Init.php');
+define('APP_DIR',__DIR__);
+\frame\Base::setAlias('@api', __DIR__ );
+
+$arr_config = require (__DIR__ . '/config/config.php');
+$arr_config = array_merge($arr_config,[
+    'id' => 'console',
+    'basePath' => __DIR__ . '/api',
+    'controllerNamespace' => 'api\timer',
+]);
+
+$application = new \frame\console\Application($arr_config);
+
+$exitCode = $application->run();
+exit($exitCode);

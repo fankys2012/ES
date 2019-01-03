@@ -184,6 +184,7 @@ class MediaAssetsDoc
                         'source'       =>['type'=>'keyword'],//数据来源
                         'cp_id'        =>['type'=>'keyword'],
                         'epg_tag'      =>['type'=>'keyword'],//终端类型
+                        'kw_cites'     =>['type'=>'keyword'],//媒资引用的关键词
                     ]
                 ]
             ],
@@ -330,6 +331,7 @@ class MediaAssetsDoc
             'source'       => Base::$app->getParam($params,'source','cms'),//数据来源
             'cp_id'        => Base::$app->getParam($params,'cp_id',''),
             'epg_tag'      => Base::$app->getParam($params,'epg_tag',''),//终端类型
+            'kw_cites'     => Base::$app->getParam($params,'kw_cites',[]),//关键词引用
         ];
         return $fieldData;
     }
@@ -358,7 +360,8 @@ class MediaAssetsDoc
             'm_agv_click'=>1,
             'cp_id'=>"",
             'epg_tag'=>"",
-            'modify_time'=>Base::$curr_date_time
+            'modify_time'=>Base::$curr_date_time,
+            'kw_cites'=>[],
         ];
         foreach ($allowFields as $key => $val) {
             if(isset($params[$key])) {
@@ -366,6 +369,9 @@ class MediaAssetsDoc
                     $fieldData[$key] = trim($params[$key]);
                 }
                 elseif (is_array($params[$key])) {
+                    $fieldData[$key] = $params[$key];
+                }
+                elseif(is_integer($params[$key])) {
                     $fieldData[$key] = $params[$key];
                 }
                 else {

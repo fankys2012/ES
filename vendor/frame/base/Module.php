@@ -264,13 +264,16 @@ class Module extends ServiceLocator
         $className = ltrim($this->controllerNamespace . '\\' . str_replace('/', '\\', $prefix)  . $className, '\\');
 
         if (strpos($className, '-') !== false || !class_exists($className)) {
+            echo $className;
+            echo "<br>";
+            die("aaaaaaaaaa");
             return null;
         }
         if (is_subclass_of($className, 'frame\base\Controller')) {
             $controller = frame\Base::createObject($className, [$id, $this]);
             return get_class($controller) === $className ? $controller : null;
         }
-
+        die("bbbbbbbbbbbb");
         return null;
     }
 

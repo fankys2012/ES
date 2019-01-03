@@ -101,7 +101,7 @@ class Application extends \frame\base\Application
             if(is_string($params[$name]) && strlen($params[$name]) >0) {
                 return trim($params[$name]);
             }
-            elseif (is_array($params[$name])) {
+            elseif (is_array($params[$name]) || is_integer($params[$name])) {
                 return $params[$name];
             }
         }

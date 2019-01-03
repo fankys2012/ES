@@ -10,6 +10,7 @@ namespace api\logic;
 
 
 use api\model\KeywordsModel;
+use api\model\MediaAssetsDoc;
 
 class KeywordsLogic
 {
@@ -272,5 +273,45 @@ class KeywordsLogic
         else {
             return ['ret'=>1,'reason'=>'keywords not found'];
         }
+    }
+
+    public function updateMediaCites($_id)
+    {
+        static $mediaAssetsDocModel = null;
+        if($mediaAssetsDocModel == null) {
+            $mediaAssetsDocModel = new MediaAssetsDoc($this->esclient->connect());
+        }
+
+        $query = [
+            '_source'=>[
+                'includes'=>['name','original_id','state']
+            ],
+            'query'=>[
+                'bool'=>[
+                    'filter'=>[
+                        'bool'=>[
+                            'must'=>[
+                                ['term'=>[
+                                    'kw_cites'=>$_id
+                                ]],
+                                ['term'=>[
+                                    'state'=>0
+                                ]],
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        $result = $mediaAssetsDocModel->getList($query,0,1);
+        if($result['ret'] == 0) {
+            $total = $result['data']['total'];
+            $params = [
+                'cites_counter'=>$total,
+            ];
+            $edres = $this->updateKeywords($_id,$params);
+            return $edres;
+        }
+        return $result;
     }
 }

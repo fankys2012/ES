@@ -16,6 +16,12 @@ return [
             '192.168.56.120:9200'
         ],
         'es_log_level'=>100,// DEBUG：100 ；INFO：200 ；NOTICE：250；WARNING：300；ERROR：400；ALERT：550
+        'redis'=>[
+            'host'=>'127.0.0.1',
+            'port'=>'6379',
+            'password'=>'',
+            'timeout'=>3,
+        ],
     ],
 
 ];

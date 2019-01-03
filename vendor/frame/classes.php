@@ -28,4 +28,9 @@ return [
     'frame\web\NotFoundHttpException' => FRAME_PATH . '/web/NotFoundHttpException.php',
 
     'frame\helpers\FileHelper' => FRAME_PATH . '/helpers/FileHelper.php',
+
+
+    'frame\console\Application' => FRAME_PATH . '/console/Application.php',
+    'frame\console\Request' => FRAME_PATH . '/console/Request.php',
+    'frame\console\Controller' => FRAME_PATH . '/console/Controller.php',
 ];
