@@ -132,15 +132,16 @@ class MediaAssetsLogic
             $this->createKeywords($name,'vod','',$params['source'],$cites);
         }
         //导演
-        if(is_array($params['director']) && !empty($params['director']))
+        if(isset($params['director']) && is_array($params['director']) && !empty($params['director']))
         {
             foreach ($params['director'] as $director)
             {
                 $this->createKeywords($director['name'],'star',$director['id'],$params['source'],$cites);
             }
         }
+
         //演员
-        if(is_array($params['actor']) && !empty($params['actor']))
+        if(isset($params['actor']) && is_array($params['actor']) && !empty($params['actor']))
         {
             foreach ($params['actor'] as $actor)
             {
