@@ -83,56 +83,28 @@ class MediaAssetsSearchLogic
         }
         if(preg_match ("/^[A-Za-z]+$/u", $name)) {
             $bool = [
-                'should'=>[
-                    [
-                        'prefix'=>[
-                            'name.pinyin'=>strtolower($name)
-                        ]
-                    ],
-                    [
-                        'prefix'=>[
-                            'alias_name.pinyin'=>strtolower($name)
-                        ]
-                    ],
-                    [
-                        'prefix'=>[
-                            'director.name.pinyin'=>strtolower($name)
-                        ]
-                    ],
-                    [
-                        'prefix'=>[
-                            'actor.name.pinyin'=>strtolower($name)
-                        ]
+                'must'=>[
+                    'multi_match'=>[
+                        'query'=>$name,
+                        //@see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
+                        'type'=>'phrase_prefix',
+                        'fields'=>['name.pinyin','alias_name.pinyin','director.name.pinyin','actor.name.pinyin']
                     ]
-
                 ]
             ];
 
         }
         else {
             $bool = [
-                'should'=> [
-                    ['match_phrase_prefix'=> [
-                        'name'=>$name
+                'must'=>[
+                    'multi_match'=>[
+                        'query'=>$name,
+                        //@see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
+                        'type'=>'phrase_prefix',
+                        'fields'=>['name','director.name','actor.name','alias_name','summary^0.5']
                     ]
-                    ],
-                    ['match_phrase'=> [
-                        'director.name'=>$name
-                    ]
-                    ],
-                    ['match_phrase'=> [
-                        'actor.name'=>$name
-                    ]
-                    ],
-                    ['match_phrase_prefix'=> [
-                        'alias_name'=>$name
-                    ]
-                    ],
-                    ['match_phrase_prefix'=> [
-                        'summary'=>$name
-                    ]
-                    ],
                 ]
+
             ];
 
         }
@@ -230,8 +202,8 @@ class MediaAssetsSearchLogic
                     ]
                 ]
             ];
-
         }
+
         return $bool;
     }
 

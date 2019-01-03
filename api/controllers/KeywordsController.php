@@ -267,6 +267,9 @@ class KeywordsController extends Controller
         return $this->reponse(['ret'=>0,'reason'=>'success']);
     }
 
+    /**
+     * N39_a_65接口搜索
+     */
     public function searchAction()
     {
         $category = Base::$app->request->getParam('category');

@@ -22,30 +22,6 @@ class KeywordsLogic
         $this->esclient = ESLogic::getInstance();
     }
 
-    public function getByName($name)
-    {
-        $params = [
-            'index' =>KeywordsModel::INDEXNAME,
-            'type'  =>KeywordsModel::MAPPINGNAME,
-            'body'=>[
-                'query'=>[
-//                    'bool'=>[
-//
-//                        'filter'=>[
-                            'term'=>[
-                                'name'=>$name
-                            ]
-//                        ]
-//                    ],
-
-                ]
-            ]
-        ];
-        $client = $this->esclient->connect();
-        $result = $client->search($params);
-
-        return $result;
-    }
 
     /**
      * 添加关键词
@@ -275,6 +251,11 @@ class KeywordsLogic
         }
     }
 
+    /**
+     * 更新关键词媒资引用数
+     * @param string $_id 关键词文档id
+     * @return array
+     */
     public function updateMediaCites($_id)
     {
         static $mediaAssetsDocModel = null;
@@ -295,7 +276,7 @@ class KeywordsLogic
                                     'kw_cites'=>$_id
                                 ]],
                                 ['term'=>[
-                                    'state'=>0
+                                    'state'=>1
                                 ]],
                             ]
                         ]
