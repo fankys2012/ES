@@ -59,23 +59,24 @@ class MediaAssetsLogic
         }
 
         $_id = md5($params['original_id'].$params['source']);
-        //若媒资包栏目未空 则表示未上线，未上线的数据状态置为不可用状态
-        if(!isset($params['package']) || count($params['package']) <1) {
-            $params['state'] = 0;
-        }
-        elseif(isset($params['package']) && count($params['package']) >0) {
-            $params['state'] = 1;
-        }
+
 
         $exists = $this->mediaAsstesDocModel->getDocById($_id);
 
         //创建关键词
         $this->keywordsList = [];
         if($params['category'] =='vod') {
+            //若媒资包栏目未空 则表示未上线，未上线的数据状态置为不可用状态
+            if(!isset($params['package']) || count($params['package']) <1) {
+                $params['state'] = 0;
+            }
+            elseif(isset($params['package']) && count($params['package']) >0) {
+                $params['state'] = 1;
+            }
             $this->createVodMediaAssetsKeywords($params);
         }
         else if($params['category'] =='star') {
-            $kres = $this->createKeywords($params['name'],'star',$params['original_id'],$params['source'],1);
+            $kres = $this->createKeywords($params['name'],'star',$params['original_id'],$params['source'],$params['state']);
         }
         $params['kw_cites'] = $this->keywordsList;
 
@@ -121,14 +122,19 @@ class MediaAssetsLogic
     public function createVodMediaAssetsKeywords($params)
     {
         $cites = $params['state'] ? 1:0;
+        $cites_data = [
+            'cp_id'=>isset($params['cp_id']) ? $params['cp_id'] : '',
+            'epg_tag'=>isset($params['epg_tag']) ? $params['epg_tag'] : '',
+            'original_id'=>$params['original_id'],
+        ];
         if(isset($params['name']) && $params['name']) {
             $name = $this->rinseKeywords($params['name'],'vod','vod_name');
-            $this->createKeywords($name,'vod','',$params['source'],$cites);
+            $this->createKeywords($name,'vod','',$params['source'],$cites,$cites_data);
         }
         //别名
         if(isset($params['alias_name']) && $params['alias_name']) {
             $name = $this->rinseKeywords($params['alias_name'],'vod','vod_alias');
-            $this->createKeywords($name,'vod','',$params['source'],$cites);
+            $this->createKeywords($name,'vod','',$params['source'],$cites,$cites_data);
         }
         //导演
         if(isset($params['director']) && is_array($params['director']) && !empty($params['director']))
@@ -183,7 +189,7 @@ class MediaAssetsLogic
      * @param int $cites
      * @return array
      */
-    protected function createKeywords($name,$category,$originalId,$source='cms',$cites=0,$state=1)
+    protected function createKeywords($name,$category,$originalId,$source='cms',$cites=0,$cites_data=[])
     {
         if($originalId) {
             $_id = md5($originalId.$source);
@@ -197,23 +203,64 @@ class MediaAssetsLogic
         }
 
         if($exists['ret'] ==0 && $exists['data']['_id'] ) {
-            //如果明星 且存在则不更新
+            //明星
             if($category =='star'){
-                return $exists;
+                $data = [
+                    'name'=>$name,
+                    'cites_counter'=>$cites,
+                ];
             }
             else {
-                if(in_array($category,$exists['data']['category'])) {
-                    return $exists;
+                if($category == 'vod') {
+                    $cites_item = [
+                            'original_id'=>$cites_data['original_id'],
+                            'cp_id'=>isset($cites_data['cp_id']) ? $cites_data['cp_id'] : '',
+                            'epg_tag'=>isset($cites_data['epg_tag']) ? $cites_data['epg_tag'] : '',
+                    ];
+
+                    if(isset($exists['data']['cites_data']) && is_array($exists['data']['cites_data'])) {
+                        $citesFlag = false;
+                        foreach ($exists['data']['cites_data'] as $key => $value) {
+                            if($value['original_id'] == $cites_data['original_id']) {
+                                $exists['data']['cites_data'][$key] = $cites_item;
+                                $citesFlag = true;
+                                break;
+                            }
+                        }
+                        if($citesFlag == false) {
+                            $exists['data']['cites_data'] = array_merge($exists['data']['cites_data'],array($cites_item));
+                        }
+                    }
+                    else {
+                        $exists['data']['cites_data'][] = $cites_item;
+                    }
                 }
-                array_push($exists['data']['category'],$category);
+                if(!is_array($exists['data']['category'])) {
+                    $exists['data']['category']= [$category];
+                }
+                elseif(!in_array($category,$exists['data']['category'])){
+                    array_push($exists['data']['category'],$category);
+                }
                 $data = [
-                    'category'=>$exists['data']['category']
+                    'category'=>$exists['data']['category'],
+                    'cites_data' =>$exists['data']['cites_data'],
                 ];
-                return $this->keywordsLogic->updateKeywords($_id,$data);
+
             }
+            return $this->keywordsLogic->updateKeywords($_id,$data);
         }
         else{
-            $params = KeywordsModel::getAddFieldData($name,$category,$state,$originalId,$source,$cites);
+            $params = KeywordsModel::getAddFieldData($name,$category,1,$originalId,$source,$cites);
+            if($category == 'vod') {
+                $params['cites_data'] = [
+                    [
+                        'original_id'=>$originalId,
+                        'cp_id'=>isset($cites_data['cp_id']) ? $cites_data['cp_id'] : '',
+                        'epg_tag'=>isset($cites_data['epg_tag']) ? $cites_data['epg_tag'] : '',
+                    ]
+                ];
+            }
+
             return $this->keywordsLogic->addKeywords($params,$_id);
         }
 

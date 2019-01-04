@@ -108,7 +108,6 @@ class KeywordsController extends Controller
 
     public function editAction()
     {
-        exit;
         $name = Base::$app->request->getParam('name');
         $id = Base::$app->request->getParam('id');
         $weight = Base::$app->request->getParam('weight');
@@ -282,6 +281,7 @@ class KeywordsController extends Controller
         $filterParams = [
             'state'     => 1,
             'category'  =>$category,
+            'cites_counter'=>0,
         ];
 
         $queryBool = [];

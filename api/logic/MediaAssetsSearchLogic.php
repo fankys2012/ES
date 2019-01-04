@@ -27,6 +27,19 @@ class MediaAssetsSearchLogic
         else {
             $conf = [];
         }
+        /*
+         * modifier 定义
+         *   none：不处理
+         *   log：计算对数
+         *   log1p：先将字段值 +1，再计算对数
+         *   log2p：先将字段值 +2，再计算对数
+         *   ln：计算自然对数
+         *   ln1p：先将字段值 +1，再计算自然对数
+         *   ln2p：先将字段值 +2，再计算自然对数
+         *   square：计算平方
+         *   sqrt：计算平方根
+         *   reciprocal：计算倒数
+         */
         $arr_fields = [
             'oned_click'=>[
                 'field'=>'oned_click',
@@ -56,6 +69,10 @@ class MediaAssetsSearchLogic
                 'field'=>'m_agv_click',
                 'modifier'=>'log1p'
             ],
+            'weight'=>[
+                'field'=>'weight',
+                'modifier'=>'reciprocal'
+            ]
         ];
         $score = [];
         foreach ($arr_fields as $key => $item)
@@ -111,6 +128,11 @@ class MediaAssetsSearchLogic
         return $bool;
     }
 
+    /**
+     * 搜索过滤器
+     * @param $params
+     * @return array
+     */
     public static function boolFilter($params)
     {
         //分类过滤
@@ -156,6 +178,23 @@ class MediaAssetsSearchLogic
             }
 
         }
+        /*
+         * 键词搜索 引用必须大于0
+         *  gt : greater than
+         *  lt : less than
+         *  gte: greater than or equal to
+         *  lte: less than or equal to
+         */
+        if(isset($params['cites_counter'])) {
+            $bool['must'][] = [
+                'range'=>[
+                    'cites_counter'=>[
+                        'gt'=>0
+                    ]
+                ]
+            ];
+        }
+
         //EGP tag 过滤
 //        if(isset($params['epg_tag']) && $params['epg_tag']) {
 //            $bool['should'][] = [
