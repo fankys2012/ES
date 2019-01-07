@@ -1,2 +1,2 @@
 <?php 
- return 'a:1:{s:3:"vod";a:2:{s:8:"vod_name";a:2:{s:8:"patterns";a:1:{i:0;s:8:"/(\d)+$/";}s:7:"replace";a:1:{i:0;s:0:"";}}s:9:"vod_alias";a:2:{s:8:"patterns";a:1:{i:0;s:8:"/(\d)+$/";}s:7:"replace";a:1:{i:0;s:0:"";}}}}';
+ return 'a:0:{}';

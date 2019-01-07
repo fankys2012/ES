@@ -38,32 +38,23 @@ class KeywordsModel
                     'number_of_shards' => 3,
                     'number_of_replicas' => 2,
                     'analysis'=>[
+
+                        'filter'=>[
+                            'separate_pinyin'=>[
+                                'type'=>'pinyin',
+                                'keep_first_letter'=>true,
+                                'keep_full_pinyin'=>false,
+                                'keep_joined_full_pinyin'=>true,
+                                'lowercase'=>true,
+                            ]
+                        ],
                         'analyzer'=>[
                             'ik_pinyin_analyzer'=>[
                                 'type'=>'custom',
                                 'tokenizer'=>'ik_smart',
-                                'filter'=>['kw_pinyin','word_delimiter']
+                                'filter'=>['separate_pinyin']
                             ],
-                            'pinyin_analyzer'=>[
-                                'tokenizer'=>'separate_pinyin'
-                            ]
                         ],
-                        'filter'=>[
-                            'kw_pinyin'=>[
-                                'type'=>'pinyin',
-                                'first_letter'=>'prefix',
-                                'padding_char'=>' '
-                            ]
-                        ],
-                        'tokenizer'=>[
-                            'separate_pinyin'=>[
-                                'type'=>'pinyin',
-                                'keep_full_pinyin'=>false,
-//                                'keep_separate_first_letter'=>true,//刘德华>l,d,h default: false
-                                'keep_joined_full_pinyin'=>true,
-                                'lowercase'=>true
-                            ]
-                        ]
                     ]
                 ],
 
@@ -91,8 +82,7 @@ class KeywordsModel
                                 'pinyin'=>[
                                     'type'=>'text',
                                     'term_vector'=>'with_positions_offsets',
-                                    'analyzer'=>'pinyin_analyzer',
-//                                    "boost"=>10
+                                    'analyzer'=>'ik_pinyin_analyzer',
                                 ]
                             ]
                         ],

@@ -222,7 +222,7 @@ class MediaAssetsSearchLogic
         }
         if(preg_match ("/^[A-Za-z]+$/u", $name)) {
             $bool = [
-                'should'=>[
+                'must'=>[
                     [
                         'prefix'=>[
                             'name.pinyin'=>strtolower($name)
@@ -234,7 +234,7 @@ class MediaAssetsSearchLogic
         }
         else {
             $bool = [
-                'should'=> [
+                'must'=> [
                     ['match_phrase_prefix'=> [
                         'name'=>$name
                     ]

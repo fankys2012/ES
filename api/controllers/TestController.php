@@ -9,6 +9,7 @@
 namespace api\controllers;
 
 
+use api\logic\ESLogic;
 use api\logic\KeywordsLogic;
 use api\logic\MediaAssetsLogic;
 use frame\web\Controller;
@@ -40,4 +41,5 @@ class TestController extends Controller
         $result = $keywordsLogic->updateClick($_REQUEST);
         return $this->reponse($result);
     }
+
 }
