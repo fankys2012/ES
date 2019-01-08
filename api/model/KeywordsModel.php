@@ -38,20 +38,21 @@ class KeywordsModel
                     'number_of_shards' => 3,
                     'number_of_replicas' => 2,
                     'analysis'=>[
-
                         'filter'=>[
                             'separate_pinyin'=>[
                                 'type'=>'pinyin',
                                 'keep_first_letter'=>true,
                                 'keep_full_pinyin'=>false,
                                 'keep_joined_full_pinyin'=>true,
+                                'keep_none_chinese_in_joined_full_pinyin'=>false,
+                                'none_chinese_pinyin_tokenize'=>false,
                                 'lowercase'=>true,
                             ]
                         ],
                         'analyzer'=>[
                             'ik_pinyin_analyzer'=>[
                                 'type'=>'custom',
-                                'tokenizer'=>'ik_smart',
+                                'tokenizer'=>'whitespace',
                                 'filter'=>['separate_pinyin']
                             ],
                         ],
@@ -78,6 +79,7 @@ class KeywordsModel
                     'properties'=>[
                         'name'=>[
                             'type'=>"text",
+                            'analyzer'=>'ik_smart',
                             'fields'=>[
                                 'pinyin'=>[
                                     'type'=>'text',

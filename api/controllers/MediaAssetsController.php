@@ -59,7 +59,7 @@ class MediaAssetsController extends Controller
             {
                 $_id = md5($item['original_id'].$item['source']);
                 $params = [
-                    'package'=>$item['package'],
+                    'package'=>isset($item['package'])?$item['package']:'',
                     'state'=> count($item['package']) < 1 ? 0: 1,
                 ];
                 $res = $this->mediaAssetsLogic->mediaAsstesDocModel->editDoc($params,$_id);

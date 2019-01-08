@@ -62,7 +62,7 @@ class MediaAssetsSearchLogic
                 'modifier'=>'log1p'
             ],
             'field_value_factor'=>[
-                'field'=>'field_value_factor',
+                'field'=>'m_click',
                 'modifier'=>'log1p'
             ],
             'm_agv_click'=>[

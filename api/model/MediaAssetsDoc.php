@@ -36,34 +36,30 @@ class MediaAssetsDoc
                     'number_of_shards' => 3,
                     'number_of_replicas' => 2,
                     'analysis'=>[
+                        'filter'=>[
+                            'separate_pinyin'=>[
+                                'type'=>'pinyin',
+                                'keep_first_letter'=>true,
+                                'keep_full_pinyin'=>false,
+                                'keep_joined_full_pinyin'=>true,
+                                'keep_none_chinese_in_joined_full_pinyin'=>false,
+                                'none_chinese_pinyin_tokenize'=>false,
+                                'lowercase'=>true,
+                            ]
+                        ],
                         'analyzer'=>[
                             'ik_pinyin_analyzer'=>[
                                 'type'=>'custom',
                                 'tokenizer'=>'ik_smart',
-                                'filter'=>['kw_pinyin','word_delimiter']
+                                'filter'=>['separate_pinyin']//word_delimiter
                             ],
-                            'pinyin_analyzer'=>[
+                            'ws_pinyin_analyzer'=>[
                                 'type'=>'custom',
-                                'tokenizer'=>'separate_pinyin',
-                                'filter'=>['kw_pinyin']
-                            ]
+                                'tokenizer'=>'whitespace',
+                                'filter'=>['separate_pinyin']//word_delimiter
+                            ],
                         ],
-                        'filter'=>[
-                            'kw_pinyin'=>[
-                                'type'=>'pinyin',
-                                'first_letter'=>'prefix',
-                                'padding_char'=>' '
-                            ]
-                        ],
-                        'tokenizer'=>[
-                            'separate_pinyin'=>[
-                                'type'=>'pinyin',
-                                'keep_full_pinyin'=>false,
-//                                'keep_separate_first_letter'=>true,//刘德华>l,d,h default: false
-                                'keep_joined_full_pinyin'=>true,
-                                'lowercase'=>true
-                            ]
-                        ]
+
                     ]
                 ],
 
@@ -94,22 +90,23 @@ class MediaAssetsDoc
                     'properties'=>[
                         'name'=>[
                             'type'=>"text",
-                            'analyzer'=>'ik_max_word',
+                            'analyzer'=>'ik_smart',
                             'fields'=>[
                                 'pinyin'=>[
                                     'type'=>'text',
                                     'term_vector'=>'with_positions_offsets',
-                                    'analyzer'=>'pinyin_analyzer',
+                                    'analyzer'=>'ik_pinyin_analyzer',
                                 ]
                             ]
                         ],
                         'alias_name'=>[
                             'type'=>"text",
+                            'analyzer'=>'ik_smart',
                             'fields'=>[
                                 'pinyin'=>[
                                     'type'=>'text',
                                     'term_vector'=>'with_positions_offsets',
-                                    'analyzer'=>'pinyin_analyzer',
+                                    'analyzer'=>'ik_pinyin_analyzer',
                                 ]
                             ]
                         ],
@@ -121,12 +118,12 @@ class MediaAssetsDoc
                             'properties'=>[
                                 'name'=>[
                                     'type'=>'text',
-                                    'analyzer'=>'ik_max_word',
+                                    'analyzer'=>'ik_smart',
                                     'fields'=>[
                                         'pinyin'=>[
                                             'type'=>'text',
                                             'term_vector'=>'with_positions_offsets',
-                                            'analyzer'=>'pinyin_analyzer',
+                                            'analyzer'=>'ws_pinyin_analyzer',
                                         ]
                                     ]
                                 ],
@@ -139,12 +136,12 @@ class MediaAssetsDoc
                             'properties'=>[
                                 'name'=>[
                                     'type'=>'text',
-                                    'analyzer'=>'ik_max_word',
+                                    'analyzer'=>'ik_smart',
                                     'fields'=>[
                                         'pinyin'=>[
                                             'type'=>'text',
                                             'term_vector'=>'with_positions_offsets',
-                                            'analyzer'=>'pinyin_analyzer',
+                                            'analyzer'=>'ws_pinyin_analyzer',
                                         ]
                                     ]
                                 ],
