@@ -96,6 +96,12 @@ class KeywordsLogic
             {
                 $data = $item['_source'];
                 $data['id'] = $item['_id'];
+                if(isset($item['highlight']['name'])) {
+                    $data['highlight']['name'] = $item['highlight']['name'];
+                }
+                elseif (isset($item['highlight']['name.pinyin'])) {
+                    $data['highlight']['name'] = $item['highlight']['name.pinyin'];
+                }
                 $list[] = $data;
                 unset($data);
             }

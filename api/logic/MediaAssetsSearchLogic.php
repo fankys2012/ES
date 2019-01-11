@@ -21,7 +21,7 @@ class MediaAssetsSearchLogic
     {
         $conf = require APP_DIR.'/config/weight.php';
         $factorType = $factorType ?: 'vod';
-        if(isset($conf['search'][$factorType])) {
+        if(isset($conf[$kind][$factorType])) {
             $conf = $conf[$kind][$factorType];
         }
         else {
@@ -61,7 +61,7 @@ class MediaAssetsSearchLogic
                 'field'=>'fth_agv_click',
                 'modifier'=>'log1p'
             ],
-            'field_value_factor'=>[
+            'm_click'=>[
                 'field'=>'m_click',
                 'modifier'=>'log1p'
             ],
@@ -105,7 +105,7 @@ class MediaAssetsSearchLogic
                         'query'=>$name,
                         //@see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
                         'type'=>'phrase_prefix',
-                        'fields'=>['name.pinyin','alias_name.pinyin','director.name.pinyin','actor.name.pinyin']
+                        'fields'=>['name.pinyin','alias_name.pinyin','director.name.pinyin','actor.name.pinyin','name.full_pinyin']
                     ]
                 ]
             ];
@@ -264,5 +264,22 @@ class MediaAssetsSearchLogic
             }
         }
         return $aggs;
+    }
+
+    /**
+     * 关键词高亮
+     */
+    public static function keywordsHightlight()
+    {
+        $highlight = [
+            'boundary_chars'=>".,!? \t\n，。！？",
+            'pre_tags'=>"<font color=\"red\">",
+            'post_tags'=>"</font>",
+            'fields'=>[
+                'name'=>['number_of_fragments'=>0],
+                'name.pinyin'=>['number_of_fragments'=>0],
+            ],
+        ];
+        return $highlight;
     }
 }

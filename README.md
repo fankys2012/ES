@@ -31,6 +31,10 @@
         }
     }
 }
+
+#调整深度翻页限制
+curl -XPUT http://127.0.0.1:9200/my_index/_settings -d '{ "index" : { "max_result_window" : 500000}}'
+
 #query_dsl domian https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-queries.html
 
 #排序 https://www.cnblogs.com/richaaaard/p/5254988.html

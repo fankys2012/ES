@@ -38,25 +38,6 @@ class KeywordsController extends Controller
     }
 
 
-    public function createIndexAction()
-    {
-        $result = $this->_keywordsModel->CreateIndex();
-        echo json_encode($result);
-    }
-
-    public function createMappingAction()
-    {
-        $result = $this->_keywordsModel->CreateMapping();
-        echo json_encode($result);
-    }
-
-    public function getMappingAction()
-    {
-        $result = $this->_keywordsModel->getMapping();
-        echo "<pre>";
-        print_r($result);
-    }
-
     public function getListAction()
     {
         $category = Base::$app->request->getParam('category','vod');
@@ -170,66 +151,6 @@ class KeywordsController extends Controller
 
     }
 
-    public function addAction()
-    {
-        exit;
-        $date = date('Y-m-d H:i:s',time());
-        //类型
-        $category = Base::$app->request->getParam('category','vod');
-        $original_id = Base::$app->request->getParam('original_id');
-        $soruce = Base::$app->request->getParam('soruce','cms');
-
-        $params = array(
-            'name'         => Base::$app->request->getParam('name'),
-            'category'     => [$category],
-            'weight'       => (int)Base::$app->request->getParam('weight',0),//权重
-            't_click'      => (int)Base::$app->request->getParam('t_click',0),//总点击数
-            'state'        => (int)Base::$app->request->getParam('state',1),//状态 1：启用 0：禁用
-            'oned_click'   => (int)Base::$app->request->getParam('oned_click',0),//1日点击量
-            'sd_click'     => (int)Base::$app->request->getParam('sd_click',0),//7日点击量
-            'sd_avg_click' => (int)Base::$app->request->getParam('sd_avg_click',0),//7日日均点击量
-            'fth_click'    => (int)Base::$app->request->getParam('fth_click',0),//15日点击量
-            'fth_agv_click'=> (int)Base::$app->request->getParam('fth_agv_click',0),//15日日均点击量
-            'm_click'      => (int)Base::$app->request->getParam('m_click',0),//30日点击量
-            'm_agv_click'  => (int)Base::$app->request->getParam('m_agv_click',0),//30日日均点击量
-            'create_time'  => $date, //创建时间
-            'modify_time'  => $date,//修改时间
-            'original_id'  => $original_id,
-            'source'       => $soruce,
-            'cites_counter'=> 0,
-        );
-        if($category == 'star') {
-            if(empty($original_id)) {
-                return $this->reponse(['ret'=>1,'reason'=>'original_id can not empty']);
-            }
-            $id = md5($original_id.$soruce);
-        }
-        else {
-            $id = md5($params['name']);
-        }
-
-        $exist = $this->_keywordsLogic->getById($id);
-        if($exist['ret'] == 0) {
-            $old_category = $exist['data']['category'];
-            $edit_params = [
-                'name'=>Base::$app->request->getParam('name'),
-                'category' => array_unique(array_merge($old_category,array($category)))
-            ];
-            $result = $this->_keywordsLogic->updateKeywords($id,$edit_params);
-            if($result['ret'] == 0) {
-                // $this->_keywordsLogic->refresh();
-            }
-            return $this->reponse($result);
-        }
-        else {
-            $result = $this->_keywordsLogic->addKeywords($params,$id);
-            if($result['ret'] == 0) {
-                $this->_keywordsLogic->refresh();
-            }
-            return $this->reponse($result);
-        }
-        
-    }
 
     public function delAction()
     {
@@ -307,7 +228,9 @@ class KeywordsController extends Controller
                     'boost_mode'=>'sum',//multiply,replace,sum,avg,max,min
                     'score_mode'=>'sum',//multiply,sum,avg,first,max,min
                 ],
-            ]
+            ],
+//            'highlight'=>MediaAssetsSearchLogic::keywordsHightlight(),
+
         ];
 
         $result = $this->_keywordsLogic->getList($query,$from,$size);

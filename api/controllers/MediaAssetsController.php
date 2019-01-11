@@ -46,6 +46,7 @@ class MediaAssetsController extends Controller
         {
             return $this->reponse(['ret'=>1,'reason'=>'post_data is empty']);
         }
+//        var_dump($post_data);exit;
         $resultList = [];
         foreach ($post_data as $item)
         {

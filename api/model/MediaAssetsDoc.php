@@ -57,7 +57,7 @@ class MediaAssetsDoc
                                 'type'=>'custom',
                                 'tokenizer'=>'whitespace',
                                 'filter'=>['separate_pinyin']//word_delimiter
-                            ],
+                            ]
                         ],
 
                     ]
@@ -96,6 +96,11 @@ class MediaAssetsDoc
                                     'type'=>'text',
                                     'term_vector'=>'with_positions_offsets',
                                     'analyzer'=>'ik_pinyin_analyzer',
+                                ],
+                                'full_pinyin'=>[
+                                    'type'=>'text',
+//                                    'term_vector'=>'with_positions_offsets',
+                                    'analyzer'=>'ws_pinyin_analyzer',
                                 ]
                             ]
                         ],
@@ -153,13 +158,10 @@ class MediaAssetsDoc
                         //上线媒资包栏目
                         'package'=>[
                             'properties'=>[
-                                'asset_id'=>[
-                                    'type'=>'keyword'
+                                'id'=>[
+                                    'type'=>'keyword',
                                 ],
-                                'cate_id'=>[
-                                    'type'=>'keyword'
-                                ],
-                            ],
+                            ]
                         ],
                         //影片类型 nns_view_type [电影、综艺....]
                         'asset_type'   => ['type'=>'keyword'],
