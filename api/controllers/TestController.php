@@ -48,7 +48,7 @@ class TestController extends Controller
 
     public function ftpAction()
     {
-        $list['8ac267ad015d246fdd4f3ef200da1ff2'] = [
+        $list['75580aa6a3345fb7bcb8d7b46a6391f9'] = [
             'original_id'=>'06070fc25f8ad259b95408146481dd6b',
             'oned_click'=>11,
             'sd_click'=>22,

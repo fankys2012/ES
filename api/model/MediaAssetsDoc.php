@@ -498,19 +498,21 @@ class MediaAssetsDoc
         $editDoc = [];
         foreach ($params as $key => $item){
             $editDoc['body'][] = [
-                'index' => [
+                'update' => [
                     '_index' => self::INDEXNAME,
                     '_type' => self::MAPPINGNAME,
                     '_id' => $key
                 ]
             ];
-            $editDoc['body'][] = $item;
+            $editDoc['body'][] = [
+                'doc'=>$item
+            ];
         }
         $result = $this->escliend->bulk($editDoc);
         if(is_array($result['items'])) {
             $list = [];
             foreach ($result['items'] as $value) {
-                $list[$value['index']['_id']] = $value['index']['result'];
+                $list[$value['update']['_id']] = $value['update']['result'];
             }
             return ['ret'=>0,'data'=>$list];
         }

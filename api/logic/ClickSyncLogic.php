@@ -15,6 +15,8 @@ use frame\Base;
 
 class ClickSyncLogic
 {
+    const REDISHASHKEY = 'sync:media_assets';
+
     protected $esclient=null;
 
     public $mediaAsstesDocModel = null;
@@ -87,10 +89,41 @@ class ClickSyncLogic
                 return $result;
             }
         }
+        //同步关键词部分
+        if($syncKeywords && $keyWordsList) {
+            $kwresult = $this->syncKeywordsClick($keyWordsList);
+            if($kwresult['ret'] ==1) {
+                return $kwresult;
+            }
+        }
+        if($errList) {
+            return ['ret'=>1,'data'=>[
+                'failedList'=>$errList,
+                'successList'=>$result['data']
+            ]];
+        }
 
-        Base::prePrint($editDoc);
+        return $result;
+    }
 
-
+    /**
+     * @param $list = [
+     *  'doc id'=> [
+     *      'oned_click'=>'昨日点击量',
+     *      'sd_click'=>'7日点击量',
+     *      'fth_click'=>'15日点击量',
+     *      'm_click'=>'30日点击量'
+     * ]
+     * ]
+     * @return array
+     */
+    public function syncKeywordsClick($list)
+    {
+        if(empty($list)) {
+            return ['ret'=>1,'reason'=>'list empty'];
+        }
+        $ids = array_keys($list);
         $redisClient = CacheRedis::getInstance();
+        $history = $redisClient->hMGet(self::REDISHASHKEY,$ids);
     }
 }
