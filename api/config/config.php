@@ -23,6 +23,15 @@ return [
             'password'=>'',
             'timeout'=>3,
         ],
+        'clickSyncFtp'=>[
+            'address'=>'192.168.95.13',
+            'user'=>'hftv',
+            'password'=>'internetTV1688',
+            'port'=>'21',
+            'time_out'=>15,
+            'root_dir'=>'/data/starcor/www/preview/internettv/prev/ksimg'
+        ],
+        'clickSyncCp'=>'HNDX',
     ],
 
 ];

@@ -28,21 +28,16 @@ class Timer extends Controller
 
     }
 
-    public function msg($msg, $display = true)
+    public function msg($msg)
     {
         if(empty($msg))
         {
             return false;
         }
-        if($display)
-        {
-            echo date('Y-m-d H:i:s') . "   " . $msg . "\r\n<br/>";
-        }
         //写入日志文件
-        $str_cms_dir = dirname(dirname(dirname(__FILE__))) . '/';
-        $str_log_dir = $str_cms_dir . 'data/log/nn_timer/' . $this->timer_name . '/' . date("Ymd") . "/";
+        $str_log_dir = APP_DIR.'/tmp/timer/'.Base::$app->id.$this->route.'/'.date("Ymd").'/';
         $str_log_file = date("H") . '.txt';
-        $str_start_time = "[{$this->process_num}][" . date("Y-m-d H:i:s") . "]";
+        $str_start_time = "[" . date("Y-m-d H:i:s") . "]";
         if(!is_dir($str_log_dir))
         {
             mkdir($str_log_dir, 0777, true);
@@ -51,42 +46,37 @@ class Timer extends Controller
         return true;
     }
 
-    public function check_linux_course()
+    protected function check_linux_course()
     {
         //$str_course_file_name = str_replace($this->base_path_1.'/', '', $this->file_path);
         $str_course_file_name = APP_DIR.'/'.Base::$app->id.' '.$this->route;
         $str_course_file_name = "ps -ef | grep '" . $str_course_file_name . "' | grep -v grep | awk '{print $2}'";
-        m_config::timer_write_log($this->timer_path,"进程查询的命令为：" . $str_course_file_name,$this->child_path);
+        $this->msg("进程查询的命令为：" . $str_course_file_name);
         @exec($str_course_file_name,$arr_course,$exec_result);
-        m_config::timer_write_log($this->timer_path,"进程查询的结果为：" . var_export($arr_course,true),$this->child_path);
+        $this->msg("进程查询的结果为：" . var_export($arr_course,true));
         if($exec_result != 0)
         {
-            global $g_ignore_exec_error;
-            $return = $g_ignore_exec_error ? false : true;
-            unset($g_ignore_exec_error);
-            $str_desc = $return ? "程序忽略定时器进程控制，继续执行" : "程序需要定时器进程控制，停止执行";
-            m_config::timer_write_log($this->timer_path,"进程查询php报错，可能是关闭了exec，也可能没在linux环境运行....".$str_desc,$this->child_path);
-            return $return;
+            $this->msg("进程查询php报错，可能是关闭了exec，也可能没在linux环境运行....");
+            return false;
         }
         if (!empty($arr_course))
         {
             $count_course =count($arr_course);
             if($count_course == 1)
             {
-                m_config::timer_write_log($this->timer_path,"运行的进程有".$count_course."个，进程正常",$this->child_path);
+                $this->msg("运行的进程有".$count_course."个，进程正常");
                 return true;
             }
             else
             {
-                m_config::timer_write_log($this->timer_path,"运行的进程有".$count_course."个，结束进程",$this->child_path);
+                $this->msg("运行的进程有".$count_course."个，结束进程");
                 return false;
             }
         }
         else
         {
-            m_config::timer_write_log($this->timer_path,"一个进程都没开启，继续执行",$this->child_path);
+            $this->msg("一个进程都没开启，继续执行");
             return true;
         }
-        m_config::timer_write_log($this->timer_path,"-------进程查询处理结束-------",$this->child_path);
     }
 }

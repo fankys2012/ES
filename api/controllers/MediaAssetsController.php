@@ -137,4 +137,80 @@ class MediaAssetsController extends Controller
 
         $this->reponse($result);
     }
+
+    /**
+     * cms 后台媒资搜索列表
+     */
+    public function backendSearchAction()
+    {
+        $name = Base::$app->request->getParam('name');
+        $category = Base::$app->request->getParam('category','vod');
+        $order = Base::$app->request->getParam('order','t_click');
+        $from = Base::$app->request->getParam('from',0);
+        $size = Base::$app->request->getParam('size',12);
+        $query = [
+            'sort'=>[
+                [$order=>"desc"],
+                "_score"
+            ],
+            'query'=>[
+                'bool'=>[
+                    'filter'=>[
+                        'bool'=>[
+                            'must'=>[
+                                [
+                                    'term'=>[
+                                        'category'=>$category
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+        if($name) {
+            if(preg_match ("/^[A-Za-z]+$/u", $name)) {
+                $query['query']['bool']['must'][] = [
+                    'multi_match'=>[
+                        'query'=>$name,
+                        'type'=>'phrase_prefix',
+                        'fields'=>['name.full_pinyin']
+                    ]
+                ];
+            }
+            else {
+                $query['query']['bool']['must'][] = [
+                    'multi_match'=>[
+                        'query'=>$name,
+                        'type'=>'phrase_prefix',
+                        'fields'=>['name']
+                    ]
+                ];
+            }
+        }
+        $result = $this->mediaAssetsLogic->mediaAsstesDocModel->getList($query,$from,$size);
+        $this->reponse($result);
+    }
+
+    /**
+     * cms后台更新媒资权重和点击数
+     */
+    public function backendEditAction()
+    {
+        $id = Base::$app->request->getParam('id');
+        $field = [
+            'weight'=>Base::$app->request->getParam('weight'),
+            't_click'=>Base::$app->request->getParam('t_click'),
+        ];
+
+        $editField = $this->mediaAssetsLogic->mediaAsstesDocModel->getEditFieldsData($field);
+        if(empty($id) || empty($editField)) {
+            return $this->reponse(['ret'=>1,'reason'=>'参数错误']);
+        }
+        $result = $this->mediaAssetsLogic->mediaAsstesDocModel->editDoc($editField,$id);
+        $this->mediaAssetsLogic->mediaAsstesDocModel->refresh();
+        $this->reponse($result);
+
+    }
 }

@@ -28,6 +28,9 @@ return [
     'frame\web\NotFoundHttpException' => FRAME_PATH . '/web/NotFoundHttpException.php',
 
     'frame\helpers\FileHelper' => FRAME_PATH . '/helpers/FileHelper.php',
+    'frame\helpers\FtpClient' => FRAME_PATH . '/helpers/FtpClient.php',
+    'frame\helpers\FtpException' => FRAME_PATH . '/helpers/FtpException.php',
+    'frame\helpers\FtpWrapper' => FRAME_PATH . '/helpers/FtpWrapper.php',
 
 
     'frame\console\Application' => FRAME_PATH . '/console/Application.php',

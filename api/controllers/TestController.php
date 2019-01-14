@@ -9,9 +9,12 @@
 namespace api\controllers;
 
 
+use api\logic\ClickSyncLogic;
 use api\logic\ESLogic;
 use api\logic\KeywordsLogic;
 use api\logic\MediaAssetsLogic;
+use frame\Base;
+use frame\helpers\FtpClient;
 use frame\web\Controller;
 
 class TestController extends Controller
@@ -42,4 +45,26 @@ class TestController extends Controller
         return $this->reponse($result);
     }
 
+
+    public function ftpAction()
+    {
+        $list['8ac267ad015d246fdd4f3ef200da1ff2'] = [
+            'original_id'=>'06070fc25f8ad259b95408146481dd6b',
+            'oned_click'=>11,
+            'sd_click'=>22,
+            'fth_click'=>33,
+            'm_click'=>44,
+        ];
+        $list['81617cc3aa8f3fce625758181e6c1201'] = [
+            'original_id'=>'0039473cfbb6c6d3064d8e6c8af46f3e',
+            'oned_click'=>111,
+            'sd_click'=>222,
+            'fth_click'=>333,
+            'm_click'=>444,
+        ];
+        $ClickSyncLogic = new ClickSyncLogic();
+        $result = $ClickSyncLogic->syncClicks($list);
+        Base::prePrint($result);
+
+    }
 }

@@ -373,6 +373,9 @@ class MediaAssetsDoc
                 elseif(is_integer($params[$key])) {
                     $fieldData[$key] = $params[$key];
                 }
+                elseif (is_null($params[$key])) {
+                    continue;
+                }
                 else {
                     $fieldData[$key] = $val;
                 }
@@ -438,5 +441,79 @@ class MediaAssetsDoc
         }
         return ['ret'=>1,'reason'=>'not found'];
 
+    }
+
+    /*
+     * 刷新
+     */
+    public function refresh()
+    {
+        $params = [
+            'index' => self::INDEXNAME,
+            'client'=>[
+                'ignore'=>'404'
+            ],
+        ];
+        $this->escliend->indices()->refresh($params);
+        return ['ret'=>0,'reason'=>'success'];
+    }
+
+    /**
+     * 根据id 批量获取文档信息
+     * @param array $arrId
+     * @return array
+     */
+    public function mgetById($arrId)
+    {
+        $params = [
+            'index' =>self::INDEXNAME,
+            'type'  =>self::MAPPINGNAME,
+            'body'  => [
+                'ids'=>$arrId,
+            ],
+            'client'=>[
+                'ignore'=>'404'
+            ],
+        ];
+        $result = $this->escliend->mget($params);
+        if(isset($result['docs']) && $result['docs']) {
+            $list = [];
+            foreach ($result['docs'] as $item) {
+                $list[$item['_id']] = $item['_source'];
+            }
+            return ['ret'=>0,'data'=>$list];
+        }
+        return ['ret'=>1,'reason'=>'get failed'];
+    }
+
+    /**
+     * 批量更新
+     * @param $params = [
+     * 'doc id'=>[更新数据键值对...]
+     * ]
+     * @return array
+     */
+    public function updateByBulk($params)
+    {
+        $editDoc = [];
+        foreach ($params as $key => $item){
+            $editDoc['body'][] = [
+                'index' => [
+                    '_index' => self::INDEXNAME,
+                    '_type' => self::MAPPINGNAME,
+                    '_id' => $key
+                ]
+            ];
+            $editDoc['body'][] = $item;
+        }
+        $result = $this->escliend->bulk($editDoc);
+        if(is_array($result['items'])) {
+            $list = [];
+            foreach ($result['items'] as $value) {
+                $list[$value['index']['_id']] = $value['index']['result'];
+            }
+            return ['ret'=>0,'data'=>$list];
+        }
+        return ['ret'=>1,'reason'=>'bulk failed'];
     }
 }
