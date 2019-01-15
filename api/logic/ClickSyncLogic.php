@@ -9,6 +9,7 @@
 namespace api\logic;
 
 
+use api\model\KeywordsModel;
 use api\model\MediaAssetsDoc;
 use api\util\CacheRedis;
 use frame\Base;
@@ -21,6 +22,8 @@ class ClickSyncLogic
 
     public $mediaAsstesDocModel = null;
 
+    public $keywordsModel = null;
+
     public $redis = null;
 
 
@@ -30,6 +33,8 @@ class ClickSyncLogic
         $this->esclient = ESLogic::getInstance();
 
         $this->mediaAsstesDocModel = new MediaAssetsDoc($this->esclient->connect());
+
+        $this->keywordsModel = new KeywordsModel($this->esclient->connect());
 
     }
 
@@ -122,8 +127,34 @@ class ClickSyncLogic
         if(empty($list)) {
             return ['ret'=>1,'reason'=>'list empty'];
         }
+
+        //获取关键词点击量
         $ids = array_keys($list);
         $redisClient = CacheRedis::getInstance();
         $history = $redisClient->hMGet(self::REDISHASHKEY,$ids);
+
+        $cbKeyVal = [];
+        if(is_array($history)) {
+            foreach ($history as $key => $item) {
+                if($item == false) {
+                    $cbKeyVal[$key] = json_encode($list[$key]);
+                    continue;
+                }
+                $data = json_decode($item,true);
+
+                $list[$key]['oned_click'] += $data['oned_click'];
+                $list[$key]['sd_click'] += $data['sd_click'];
+                $list[$key]['fth_click'] += $data['fth_click'];
+                $list[$key]['m_click'] += $data['m_click'];
+
+                $cbKeyVal[$key] = json_encode($list[$key]);
+            }
+        }
+        //数据保存redis
+        $res = $redisClient->hMset(self::REDISHASHKEY,$cbKeyVal);
+
+        //更新文档
+        $result = $this->keywordsModel->updateByBulk($list);
+        return $result;
     }
 }

@@ -63,7 +63,7 @@ class TestController extends Controller
             'm_click'=>444,
         ];
         $ClickSyncLogic = new ClickSyncLogic();
-        $result = $ClickSyncLogic->syncClicks($list);
+        $result = $ClickSyncLogic->syncClicks($list,true);
         Base::prePrint($result);
 
     }

@@ -214,4 +214,37 @@ class KeywordsModel
         return $fieldData;
     }
 
+    /**
+     * 批量更新
+     * @param $params = [
+     * 'doc id'=>[更新数据键值对...]
+     * ]
+     * @return array
+     */
+    public function updateByBulk($params)
+    {
+        $editDoc = [];
+        foreach ($params as $key => $item){
+            $editDoc['body'][] = [
+                'update' => [
+                    '_index' => self::INDEXNAME,
+                    '_type' => self::MAPPINGNAME,
+                    '_id' => $key
+                ]
+            ];
+            $editDoc['body'][] = [
+                'doc'=>$item
+            ];
+        }
+        $result = $this->escliend->bulk($editDoc);
+        if(is_array($result['items'])) {
+            $list = [];
+            foreach ($result['items'] as $value) {
+                $list[$value['update']['_id']] = $value['update']['result'];
+            }
+            return ['ret'=>0,'data'=>$list];
+        }
+        return ['ret'=>1,'reason'=>'bulk failed'];
+    }
+
 }

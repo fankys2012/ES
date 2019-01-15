@@ -10,6 +10,7 @@ namespace api\timer;
 
 
 use api\logic\ClickSyncLogic;
+use api\util\CacheRedis;
 use frame\Base;
 use frame\helpers\FtpClient;
 use frame\helpers\FtpException;
@@ -77,6 +78,9 @@ class ClickSyncController extends Timer
         $size = 0;
         $list = [];
         $clickSyncLogic = new ClickSyncLogic();
+        //清除历史redis 记录
+        $redisClient = CacheRedis::getInstance();
+        $redisClient->delete(ClickSyncLogic::REDISHASHKEY);
 
         while (($buffer = fgets($fp, 4096)) !== false) {
             $arr = explode("|",$buffer);
@@ -86,15 +90,15 @@ class ClickSyncController extends Timer
             $key = md5($arr[2].'cms');
             $list[$key] = [
                 'original_id'=>$arr[2],
-                'oned_click'=>isset($arr[3]) ? $arr[3] : 0,
-                'sd_click'=>isset($arr[4]) ? $arr[4] : 0,
-                'fth_click'=>isset($arr[5]) ? $arr[5] : 0,
-                'm_click'=>isset($arr[6]) ? $arr[6] : 0,
+                'oned_click'=>isset($arr[3]) ? ($arr[3]+1) : 1,
+                'sd_click'=>isset($arr[4]) ? ($arr[4]+1) : 1,
+                'fth_click'=>isset($arr[5]) ? ($arr[5]+1) : 1,
+                'm_click'=>isset(git[6]) ? ($arr[6]+1) : 1,
             ];
             $size ++;
             if($size>100) {
                 $size = 0;
-                $result = $clickSyncLogic->syncClicks($list);
+                $result = $clickSyncLogic->syncClicks($list,true);
                 if($result['ret'] !=0) {
                     $this->msg(var_export($result,true));
                 }
@@ -107,7 +111,7 @@ class ClickSyncController extends Timer
         fclose($fp);
         unlink($localFile);
 
-        $result = $clickSyncLogic->syncClicks($list);
+        $result = $clickSyncLogic->syncClicks($list,true);
         if($result['ret'] !=0) {
             $this->msg(var_export($result,true));
         }
