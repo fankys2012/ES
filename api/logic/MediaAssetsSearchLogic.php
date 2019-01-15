@@ -144,7 +144,7 @@ class MediaAssetsSearchLogic
             ];
         }
         //状态过滤
-        if(isset($params['state']) && $params['state']) {
+        if(isset($params['state']) && strlen($params['state'])>0) {
             $bool['must'][] = [
                 'term'=>[
                     'state'=>$params['state']
@@ -160,23 +160,14 @@ class MediaAssetsSearchLogic
             ];
         }
         //cp过滤
-        if(isset($params['cp_id']) && strlen($params['cp_id'])>0) {
-            $arr_cp_id = explode(',',$params['cp_id']);
-            if(count($arr_cp_id) >1){
+        if(isset($params['cp_id']) && $params['cp_id']) {
+            if(count($params['cp_id']) >1){
                 $bool['must'][] = [
                     'terms'=>[
-                        'cp_id'=>$arr_cp_id
-                    ]
-                ];
-            }
-            else {
-                $bool['must'][] = [
-                    'term'=>[
                         'cp_id'=>$params['cp_id']
                     ]
                 ];
             }
-
         }
         /*
          * 键词搜索 引用必须大于0
@@ -196,13 +187,21 @@ class MediaAssetsSearchLogic
         }
 
         //EGP tag 过滤
-//        if(isset($params['epg_tag']) && $params['epg_tag']) {
-//            $bool['should'][] = [
-//                'term'=>[
-//                    'epg_tag'=>$params['epg_tag']
-//                ]
-//            ];
-//        }
+        if(isset($params['epg_tag']) && $params['epg_tag']) {
+            $bool['must'][] = [
+                'terms'=>[
+                    'epg_tag'=>$params['epg_tag']
+                ]
+            ];
+        }
+        //媒资包栏目过滤
+        if(isset($params['package'])) {
+            $bool['must'][] = [
+                'terms'=>[
+                    'package.id'=>$params['package']
+                ]
+            ];
+        }
 
         return ['filter'=>[
             'bool'=>$bool,

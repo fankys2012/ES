@@ -93,7 +93,7 @@ class ClickSyncController extends Timer
                 'oned_click'=>isset($arr[3]) ? ($arr[3]+1) : 1,
                 'sd_click'=>isset($arr[4]) ? ($arr[4]+1) : 1,
                 'fth_click'=>isset($arr[5]) ? ($arr[5]+1) : 1,
-                'm_click'=>isset(git[6]) ? ($arr[6]+1) : 1,
+                'm_click'=>isset($arr[6]) ? ($arr[6]+1) : 1,
             ];
             $size ++;
             if($size>100) {

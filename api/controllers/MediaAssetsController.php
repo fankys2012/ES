@@ -96,7 +96,9 @@ class MediaAssetsController extends Controller
             'state'     =>Base::$app->request->getParam('state'),
             'category'  =>$category,
             'asset_type'=>Base::$app->request->getParam('asset_type'),
-            'cp_id'     =>Base::$app->request->getParam('cp_id')
+            'cp_id'     =>Base::$app->request->getParam('cp_id'),
+            'package'   =>Base::$app->request->getParam('package'),
+            'epg_tag'   =>Base::$app->request->getParam('epg_tag'),
         ];
 
         $queryBool = [];
