@@ -20,7 +20,7 @@ class MediaAssetsLogic
 
     public $mediaAsstesDocModel = null;
 
-    protected $keywordsLogic = null;
+    public $keywordsLogic = null;
 
     /*
      * 媒资关联关键词_id 列表

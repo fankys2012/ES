@@ -60,14 +60,27 @@ class MediaAssetsController extends Controller
             {
                 $_id = md5($item['original_id'].$item['source']);
                 $params = [
-                    'package'=>isset($item['package'])?$item['package']:'',
-                    'state'=> count($item['package']) < 1 ? 0: 1,
+                    'package'=>isset($item['package'])?$item['package']:[],
+                    'state'=> (!isset($item['package']) || count($item['package'])< 1 ) ? 0: 1,
                 ];
                 $res = $this->mediaAssetsLogic->mediaAsstesDocModel->editDoc($params,$_id);
+                if($res['ret'] ==0)
+                {
+                    $doc = $this->mediaAssetsLogic->mediaAsstesDocModel->getDocById($_id);
+                    $this->mediaAssetsLogic->keywordsUpdateQueue($doc['data']['kw_cites']);
+                }
             }
             elseif ($item['operate'] == 'delete')
             {
                 $_id = md5($item['original_id'].$item['source']);
+                if($item['category'] =='vod') {
+                    $doc = $this->mediaAssetsLogic->mediaAsstesDocModel->getDocById($_id);
+                    $this->mediaAssetsLogic->keywordsUpdateQueue($doc['data']['kw_cites']);
+                }
+                else {
+                    //删除关键词
+                    $this->mediaAssetsLogic->keywordsLogic->delKeywordById($_id);
+                }
                 $res = $this->mediaAssetsLogic->mediaAsstesDocModel->delDocById($_id);
             }
             $res['id'] = $item['msg_id'];

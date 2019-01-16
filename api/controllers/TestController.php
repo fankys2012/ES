@@ -68,7 +68,20 @@ class TestController extends Controller
         |vstartek_td#1000011|vstartek_te#1000011|vstartek_tf#1000011|vstartek_tg#1000011|vstartek_th#1000011
         |vstartek_ti#1000011|vstartek_tv#1000012|vstartek_tv#1000013|vstartek_tv#1000014|vstartek_tv#1000015|vstartek_tv#1000016
         |vstartek_tv#1000017|vstartek_tv#1000018|vstartek_tv#1000019|vstartek_tv#1000020");
-        Base::prePrint($str);
 
+        var_dump(memory_get_usage());
+        echo "<br>";
+        $c = urlencode("TVseries#1000010|vstartek_tv#1000011|vstartek_av#1000011|vstartek_tb#1000011|vstartek_tc#1000011
+        |vstartek_td#1000011|vstartek_te#1000011|vstartek_tf#1000011|vstartek_tg#1000011|vstartek_th#1000011
+        |vstartek_ti#1000011|vstartek_tv#1000012|vstartek_tv#1000013|vstartek_tv#1000014|vstartek_tv#1000015|vstartek_tv#1000016
+        |vstartek_tv#1000017|vstartek_tv#1000018|vstartek_tv#1000019|vstartek_tv#1000020");;
+        var_dump(memory_get_usage());
+        echo "<br>";
+        $c = urlencode("TVseries#1000010|vstartek_tv#1000011|vstartek_av#1000011|vstartek_tb#1000011|vstartek_tc#1000011
+        |vstartek_td#1000011|vstartek_te#1000011|vstartek_tf#1000011|vstartek_tg#1000011|vstartek_th#1000011
+        |vstartek_ti#1000011|vstartek_tv#1000012|vstartek_tv#1000013|vstartek_tv#1000014|vstartek_tv#1000015|vstartek_tv#1000016
+        |vstartek_tv#1000017|vstartek_tv#100vstartek_tv#1000020");;
+        var_dump(memory_get_usage());
+        echo "<br>";
     }
 }

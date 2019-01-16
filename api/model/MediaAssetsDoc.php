@@ -184,6 +184,7 @@ class MediaAssetsDoc
                         'cp_id'        =>['type'=>'keyword'],
                         'epg_tag'      =>['type'=>'keyword'],//终端类型
                         'kw_cites'     =>['type'=>'keyword'],//媒资引用的关键词
+                        'relase_date'  =>['type'=>'date'],//上映时间
                     ]
                 ]
             ],

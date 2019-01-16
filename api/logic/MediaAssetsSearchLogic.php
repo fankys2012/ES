@@ -75,6 +75,19 @@ class MediaAssetsSearchLogic
             ]
         ];
         $score = [];
+        //上映时间
+        if($factorType == 'vod' && $kind == 'search') {
+            $score[] = [
+                'exp'=>[
+                    'relase_date'=>[
+                        'origin'=>date('Y-m-d'),
+                        'scale' =>'10d',
+                        'offset'=>'90d',
+                        'decay' => 0.01
+                    ]
+                ]
+            ];
+        }
         foreach ($arr_fields as $key => $item)
         {
             if(isset($conf[$key]) && $conf[$key] != '0')
