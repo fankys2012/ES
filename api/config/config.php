@@ -5,11 +5,7 @@
  * Date: 2018/11/30
  * Time: 17:11
  */
-\frame\Base::setAlias('@api', dirname(dirname(__DIR__)) . '/api');
 return [
-    'basePath' => dirname(__DIR__),
-    'controllerNamespace' => 'api\controllers',
-
     'params'=>[
         //elasticsearch address
         'es' => [
@@ -32,6 +28,7 @@ return [
             'root_dir'=>'/data/starcor/www/preview/internettv/prev/ksimg'
         ],
         'clickSyncCp'=>'HNDX',
+        'logPath'=> dirname(__DIR__).'/tmp/log',
     ],
 
 ];

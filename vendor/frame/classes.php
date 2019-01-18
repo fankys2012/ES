@@ -16,6 +16,9 @@ return [
     'frame\base\Request' => FRAME_PATH . '/base/Request.php',
     'frame\base\InvalidConfigException' => FRAME_PATH . '/base/InvalidConfigException.php',
     'frame\base\InvalidCallException' => FRAME_PATH . '/base/InvalidCallException.php',
+    'frame\base\Arrayable' => FRAME_PATH . '/base/Arrayable.php',
+    'frame\base\BootstrapInterface' => FRAME_PATH . '/base/BootstrapInterface.php',
+    'frame\base\Configurable' => FRAME_PATH . '/base/Configurable.php',
 
     'frame\di\ServiceLocator' => FRAME_PATH . '/di/ServiceLocator.php',
     'frame\di\Container' => FRAME_PATH . '/di/Container.php',
@@ -31,9 +34,16 @@ return [
     'frame\helpers\FtpClient' => FRAME_PATH . '/helpers/FtpClient.php',
     'frame\helpers\FtpException' => FRAME_PATH . '/helpers/FtpException.php',
     'frame\helpers\FtpWrapper' => FRAME_PATH . '/helpers/FtpWrapper.php',
+    'frame\helpers\BaseVarDumper' => FRAME_PATH . '/helpers/BaseVarDumper.php',
+    'frame\helpers\ArrayHelper' => FRAME_PATH . '/helpers/ArrayHelper.php',
 
 
     'frame\console\Application' => FRAME_PATH . '/console/Application.php',
     'frame\console\Request' => FRAME_PATH . '/console/Request.php',
     'frame\console\Controller' => FRAME_PATH . '/console/Controller.php',
+
+    'frame\log\Dispatcher' => FRAME_PATH . '/log/Dispatcher.php',
+    'frame\log\FileTarget' => FRAME_PATH . '/log/FileTarget.php',
+    'frame\log\Logger' => FRAME_PATH . '/log/Logger.php',
+    'frame\log\Target' => FRAME_PATH . '/log/Target.php',
 ];

@@ -9,11 +9,20 @@
 namespace frame;
 
 defined('FRAME_PATH') or define('FRAME_PATH', __DIR__);
+defined('FRAME_BEGIN_TIME') or define('FRAME_BEGIN_TIME',microtime(true));
+defined('FRAME_DATE_TIME') or define('FRAME_DATE_TIME',time());
 
 class Base
 {
     public static $classMap = [];
 
+    /**
+     * @var Container the dependency injection (DI) container used by [[createObject()]].
+     * You may use [[Container::set()]] to set up the needed dependencies of classes and
+     * their initial property values.
+     * @see createObject()
+     * @see Container
+     */
     public static $container;
 
     public static $aliases = [];
@@ -43,6 +52,12 @@ class Base
         print_r($params);
     }
 
+    /**
+     * @param $type
+     * @param array $params
+     * @return mixed
+     * @see \frame\di\Container
+     */
     public static function createObject($type, array $params = [])
     {
         if (is_string($type)) {
@@ -141,6 +156,7 @@ class Base
             }
         }
     }
+
 
 
 }

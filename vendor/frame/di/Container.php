@@ -373,7 +373,7 @@ class Container extends Component
             return $reflection->newInstanceArgs($dependencies);
         }
 
-        if (!empty($dependencies) && $reflection->implementsInterface('yii\base\Configurable')) {
+        if (!empty($dependencies) && $reflection->implementsInterface('frame\base\Configurable')) {
             // set $config as the last parameter (existing one will be overwritten)
             $dependencies[count($dependencies) - 1] = $config;
             return $reflection->newInstanceArgs($dependencies);

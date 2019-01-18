@@ -9,7 +9,7 @@
 namespace frame\base;
 
 
-class Object
+class Object implements Configurable
 {
     public function __construct($config=[])
     {

@@ -45,6 +45,9 @@ class ClickSyncLogic
      *      'sd_click'=>'7日点击量',
      *      'fth_click'=>'15日点击量',
      *      'm_click'=>'30日点击量'
+     *      'sd_avg_click'=>'7日均量',
+     *      'fth_agv_click'=>'15日均量',
+     *      'm_agv_click'=>'30日均量',
      * ]
      * ]
      * @param bool $syncKeywords 同步更新关联关键词
@@ -85,6 +88,9 @@ class ClickSyncLogic
                 'sd_click'=>$item['sd_click'],
                 'fth_click'=>$item['fth_click'],
                 'm_click'=>$item['m_click'],
+                'sd_avg_click'=>$item['sd_avg_click'],
+                'fth_agv_click'=>$item['fth_agv_click'],
+                'm_agv_click'=>$item['m_agv_click'],
             ];
 
         }
@@ -117,7 +123,10 @@ class ClickSyncLogic
      *      'oned_click'=>'昨日点击量',
      *      'sd_click'=>'7日点击量',
      *      'fth_click'=>'15日点击量',
-     *      'm_click'=>'30日点击量'
+     *      'm_click'=>'30日点击量',
+     *      'sd_avg_click'=>'7日均量',
+     *      'fth_agv_click'=>'15日均量',
+     *      'm_agv_click'=>'30日均量',
      * ]
      * ]
      * @return array
@@ -146,6 +155,9 @@ class ClickSyncLogic
                 $list[$key]['sd_click'] += $data['sd_click'];
                 $list[$key]['fth_click'] += $data['fth_click'];
                 $list[$key]['m_click'] += $data['m_click'];
+                $list[$key]['sd_avg_click'] += $data['sd_avg_click'];
+                $list[$key]['fth_agv_click'] += $data['fth_agv_click'];
+                $list[$key]['m_agv_click'] += $data['m_agv_click'];
 
                 $cbKeyVal[$key] = json_encode($list[$key]);
             }

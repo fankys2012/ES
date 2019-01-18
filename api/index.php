@@ -11,7 +11,10 @@ require_once (__DIR__ . '/../vendor/autoload.php');
 require_once (__DIR__ . '/../vendor/frame/Init.php');
 define('APP_DIR',__DIR__);
 
-$arr_config = require (__DIR__ . '/config/config.php');
+$arr_config = frame\helpers\ArrayHelper::merge(
+    require(__DIR__ . '/config/main.php'),
+    require (__DIR__ . '/config/config.php')
+);
 
 $application = new frame\web\Application($arr_config);
 $application->run();

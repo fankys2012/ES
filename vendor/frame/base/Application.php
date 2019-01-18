@@ -49,7 +49,25 @@ abstract class Application extends Module
 
     protected function bootstrap()
     {
+        foreach ($this->bootstrap as $class) {
+            $component = null;
+            if (is_string($class)) {
+                if ($this->has($class)) {
+                    $component = $this->get($class);
+                } elseif ($this->hasModule($class)) {
+                    $component = $this->getModule($class);
+                } elseif (strpos($class, '\\') === false) {
+                    throw new InvalidConfigException("Unknown bootstrapping component ID: $class");
+                }
+            }
+            if (!isset($component)) {
+                $component = Base::createObject($class);
+            }
 
+            if ($component instanceof BootstrapInterface) {
+                $component->bootstrap($this);
+            }
+        }
     }
 
     public function run()
@@ -66,7 +84,7 @@ abstract class Application extends Module
     public function coreComponents()
     {
         return [
-
+            'log' => ['class' => 'frame\log\Dispatcher'],
         ];
     }
 

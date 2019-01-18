@@ -71,7 +71,7 @@ class MediaAssetsSearchLogic
             ],
             'weight'=>[
                 'field'=>'weight',
-                'modifier'=>'reciprocal'
+                'modifier'=>'ln1p'
             ]
         ];
         $score = [];

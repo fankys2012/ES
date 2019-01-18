@@ -87,10 +87,7 @@ class Module extends ServiceLocator
      * @var string the root directory of the module.
      */
     private $_basePath;
-    /**
-     * @var string the root directory that contains view files for this module
-     */
-    private $_viewPath;
+
     /**
      * @var string the root directory that contains layout view files for this module.
      */
@@ -264,16 +261,12 @@ class Module extends ServiceLocator
         $className = ltrim($this->controllerNamespace . '\\' . str_replace('/', '\\', $prefix)  . $className, '\\');
 
         if (strpos($className, '-') !== false || !class_exists($className)) {
-            echo $className;
-            echo "<br>";
-            die("aaaaaaaaaa");
             return null;
         }
         if (is_subclass_of($className, 'frame\base\Controller')) {
             $controller = frame\Base::createObject($className, [$id, $this]);
             return get_class($controller) === $className ? $controller : null;
         }
-        die("bbbbbbbbbbbb");
         return null;
     }
 
@@ -285,6 +278,24 @@ class Module extends ServiceLocator
     public function getUniqueId()
     {
         return $this->module ? ltrim($this->module->getUniqueId() . '/' . $this->id, '/') : $this->id;
+    }
+
+    /**
+     * Checks whether the child module of the specified ID exists.
+     * This method supports checking the existence of both child and grand child modules.
+     * @param string $id module ID. For grand child modules, use ID path relative to this module (e.g. `admin/content`).
+     * @return bool whether the named module exists. Both loaded and unloaded modules
+     * are considered.
+     */
+    public function hasModule($id)
+    {
+        if (($pos = strpos($id, '/')) !== false) {
+            // sub-module
+            $module = $this->getModule(substr($id, 0, $pos));
+
+            return $module === null ? false : $module->hasModule(substr($id, $pos + 1));
+        }
+        return isset($this->_modules[$id]);
     }
 
 }

@@ -7,7 +7,7 @@
  */
 
 require(__DIR__ . '/Base.php');
-
+require(__DIR__ . '/Log.php');
 
 class Init extends \frame\Base
 {
