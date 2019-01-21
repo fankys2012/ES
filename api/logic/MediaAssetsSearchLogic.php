@@ -174,7 +174,7 @@ class MediaAssetsSearchLogic
         }
         //cp过滤
         if(isset($params['cp_id']) && $params['cp_id']) {
-            if(count($params['cp_id']) >1){
+            if(count($params['cp_id']) >0){
                 $bool['must'][] = [
                     'terms'=>[
                         'cp_id'=>$params['cp_id']

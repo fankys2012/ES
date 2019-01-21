@@ -332,6 +332,7 @@ class MediaAssetsDoc
             'cp_id'        => Base::$app->getParam($params,'cp_id',''),
             'epg_tag'      => Base::$app->getParam($params,'epg_tag',''),//终端类型
             'kw_cites'     => Base::$app->getParam($params,'kw_cites',[]),//关键词引用
+            'relase_date'  => Base::$app->getParam($params,'relase_date','1970-01-01'),
         ];
         return $fieldData;
     }
@@ -362,6 +363,7 @@ class MediaAssetsDoc
             'epg_tag'=>"",
             'modify_time'=>Base::$curr_date_time,
             'kw_cites'=>[],
+            'relase_date'=>'1970-01-01',
         ];
         foreach ($allowFields as $key => $val) {
             if(isset($params[$key])) {

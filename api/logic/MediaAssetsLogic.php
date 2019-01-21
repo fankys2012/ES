@@ -79,6 +79,9 @@ class MediaAssetsLogic
             $kres = $this->createKeywords($params['name'],'star',$params['original_id'],$params['source'],$params['state']);
         }
         $params['kw_cites'] = $this->keywordsList;
+        if(is_array($params['kw_cites'])) {
+            $params['kw_cites'] = array_unique($params['kw_cites']);
+        }
 
         if($exists['ret'] == 0 && $exists['data']['_id']) {
             $params['modify_time'] = Base::$curr_date_time;
@@ -333,6 +336,7 @@ class MediaAssetsLogic
         if(empty($keywordsList)) {
             return ['ret'=>0,'reason'=>'keywords empty'];
         }
+
         $redisClient = CacheRedis::getInstance();
         if(!$redisClient) {
             return ['ret'=>1,'reason'=>'redis connect failed'];

@@ -53,6 +53,10 @@ class MediaAssetsController extends Controller
             $res = null;
             if($item['operate'] == 'update')
             {
+                //兼容上线时间格式问题
+                if(isset($item['relase_date']) && trim($item['relase_date']) == '0000-00-00') {
+                    $item['relase_date'] = '1970-01-01';
+                }
                 unset($item['operate']);
                 $res = $this->mediaAssetsLogic->updateMediaAssetDoc($item);
             }
@@ -114,12 +118,14 @@ class MediaAssetsController extends Controller
             'epg_tag'   =>Base::$app->request->getParam('epg_tag'),
         ];
 
+
         $queryBool = [];
         $score_func = MediaAssetsSearchLogic::funcScore($category,'search');
         if($name) {
             $queryBool = MediaAssetsSearchLogic::boolMatch($name);
         }
         $filterBool = MediaAssetsSearchLogic::boolFilter($filterParams);
+
         if($filterBool) {
             $queryBool = array_merge($queryBool,$filterBool);
         }
