@@ -96,14 +96,14 @@ class ClickSyncController extends Timer
                 $avg_fth = ceil($arr[5]/15);
             }
             if(isset($arr[6]) && $arr[6]) {
-                $avg_m = ceil($arr[6]/30);
+                $avg_m = ceil((int)$arr[6]/30);
             }
             $list[$key] = [
                 'original_id'=>$arr[2],
                 'oned_click'=>isset($arr[3]) ? ($arr[3]+1) : 1,
                 'sd_click'=>isset($arr[4]) ? ($arr[4]+1) : 1,
                 'fth_click'=>isset($arr[5]) ? ($arr[5]+1) : 1,
-                'm_click'=>isset($arr[6]) ? ($arr[6]+1) : 1,
+                'm_click'=>isset($arr[6]) ? ((int)$arr[6]+1) : 1,
                 'sd_avg_click'=>$avg_sd,
                 'fth_agv_click'=>$avg_fth,
                 'm_agv_click'=>$avg_m,
@@ -112,6 +112,7 @@ class ClickSyncController extends Timer
             if($size>100) {
                 $size = 0;
                 $result = $clickSyncLogic->syncClicks($list,true);
+                $this->msg(json_encode($list));
                 if($result['ret'] !=0) {
                     $this->msg(var_export($result,true));
                 }
@@ -125,6 +126,7 @@ class ClickSyncController extends Timer
         unlink($localFile);
 
         $result = $clickSyncLogic->syncClicks($list,true);
+        $this->msg(json_encode($list));
         if($result['ret'] !=0) {
             $this->msg(var_export($result,true));
         }

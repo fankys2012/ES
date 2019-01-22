@@ -11,6 +11,7 @@ namespace api\logic;
 
 use Elasticsearch\ClientBuilder;
 use frame\Base;
+use frame\helpers\FileHelper;
 
 class ESLogic
 {
@@ -61,8 +62,12 @@ class ESLogic
         $current_time = time();
         $int_time=$current_time - ($current_time % 300);
         $str_date_time=date("Ymd", $int_time).'T'.date("His",$int_time);
-        $log_file_path = APP_DIR.'/tmp/es/'.date('Ym').'/'.date('d').'/'.$str_date_time.'.log';
-        return $log_file_path;
+        $log_file_path = APP_DIR.'/tmp/es/'.date('Ym').'/'.date('d');
+        if(!is_dir($log_file_path)) {
+            FileHelper::createDirectory($log_file_path,0755,true);
+        }
+        $log_file = $log_file_path.'/'.$str_date_time.'.log';
+        return $log_file;
     }
 
 }

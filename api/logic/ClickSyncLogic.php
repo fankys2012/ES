@@ -78,7 +78,21 @@ class ClickSyncLogic
             if($syncKeywords == true) {
                 if(isset($data['kw_cites']) && is_array($data['kw_cites'])) {
                     foreach ($data['kw_cites'] as $kw) {
-                        $keyWordsList[$kw] = $item;
+                        if(isset($keyWordsList[$kw])) {
+                            $keyWordsList[$kw] = [
+                                'oned_click'=>$item['oned_click']+$keyWordsList[$kw]['oned_click'],
+                                'sd_click'=>$item['sd_click']+$keyWordsList[$kw]['sd_click'],
+                                'fth_click'=>$item['fth_click']+$keyWordsList[$kw]['fth_click'],
+                                'm_click'=>$item['m_click']+$keyWordsList[$kw]['m_click'],
+                                'sd_avg_click'=>$item['sd_avg_click']+$keyWordsList[$kw]['sd_avg_click'],
+                                'fth_agv_click'=>$item['fth_agv_click']+$keyWordsList[$kw]['fth_agv_click'],
+                                'm_agv_click'=>$item['m_agv_click']+$keyWordsList[$kw]['m_agv_click'],
+                            ];
+                        }
+                        else {
+                            $keyWordsList[$kw] = $item;
+                        }
+
                     }
                 }
             }
