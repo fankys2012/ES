@@ -1,6 +1,6 @@
 <?php
 /**
- * Created by IntelliJ IDEA.
+ * 普通脚本非定时器
  * User: fankys
  * Date: 2019/1/8
  * Time: 11:45

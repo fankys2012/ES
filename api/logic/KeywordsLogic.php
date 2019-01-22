@@ -11,6 +11,8 @@ namespace api\logic;
 
 use api\model\KeywordsModel;
 use api\model\MediaAssetsDoc;
+use frame\helpers\BaseVarDumper;
+use frame\Log;
 
 class KeywordsLogic
 {
@@ -271,7 +273,7 @@ class KeywordsLogic
 
         $query = [
             '_source'=>[
-                'includes'=>['name','original_id','state']
+                'includes'=>['name','original_id','state','package','cp_id','epg_tag']
             ],
             'query'=>[
                 'bool'=>[
@@ -293,9 +295,42 @@ class KeywordsLogic
         $result = $mediaAssetsDocModel->getList($query,0,1);
         if($result['ret'] == 0) {
             $total = $result['data']['total'];
+            $package = [];
+            $cp_id = [];
+            $epg_tag = [];
+            if(is_array($result['data']['list'])) {
+                foreach ($result['data']['list'] as $item) {
+                    if(is_array($item['package'])) {
+                        foreach ($item['package'] as $value) {
+                            $package[] = $value['id'];
+                        }
+                    }
+                    if(isset($item['cp_id']) && $item['cp_id']) {
+                        $cp_id[] = $item['cp_id'];
+                    }
+                    if(is_array($item['epg_tag'])) {
+                        $epg_tag = array_merge($epg_tag,$item['epg_tag']);
+                    } else {
+                        $epg_tag[] = $item['epg_tag'];
+                    }
+                }
+                $package = array_unique($package);
+                $cp_id = array_unique($cp_id);
+                $epg_tag = array_unique($epg_tag);
+            }
+            $packageId = [];
+            foreach ($package as $value) {
+                $packageId[] = ['id'=>$value];
+            }
             $params = [
                 'cites_counter'=>$total,
+                'package'=>$packageId,
+                'cites_data'=>[
+                    'cp_id'=>$cp_id,
+                    'epg_tag'=>$epg_tag,
+                ],
             ];
+            Log::info("关键词[{$_id}]更新引用：".BaseVarDumper::export($params));
             $edres = $this->updateKeywords($_id,$params);
             return $edres;
         }

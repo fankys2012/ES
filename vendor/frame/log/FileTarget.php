@@ -41,7 +41,11 @@ class FileTarget extends Target
         parent::init();
 
         //app unique code number
-        $this->traceCode = FRAME_BEGIN_TIME.mt_rand(1000,9999);
+        if(isset($_REQUEST['trace_id']) && $_REQUEST['trace_id']) {
+            $this->traceCode = $_REQUEST['trace_id'];
+        } else {
+            $this->traceCode = FRAME_BEGIN_TIME.mt_rand(1000,9999);
+        }
 
         if(isset(Base::$app->params['logPath']) && Base::$app->params['logPath']) {
             $logPath = Base::$app->params['logPath'];

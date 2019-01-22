@@ -107,17 +107,21 @@ class KeywordsModel
 
                         'cites_data'=>[
                             'properties'=>[
-                                'original_id'=>[
-                                    'type'=>'keyword'
-                                ],
                                 //关键词引用的cp
                                 'cp_id'=>[
                                     'type'=>'keyword'
                                 ],
                                 'epg_tag'=>[
                                     'type'=>'keyword'
-                                ]
+                                ],
                             ],
+                        ],
+                        'package'=>[
+                            'properties'=>[
+                                'id'=>[
+                                    'type'=>'keyword',
+                                ],
+                            ]
                         ],
                     ]
                 ]

@@ -89,21 +89,34 @@ class ClickSyncController extends Timer
             }
             $key = md5($arr[2].'cms');
             $avg_sd = $avg_fth = $avg_m = 1;
+            $oned = $sd = $fth = $m = 1;
+            if(isset($arr[3]) && $arr[3] >1) {
+                $oned = $arr[3];
+            }
             if(isset($arr[4]) && $arr[4]) {
                 $avg_sd = ceil($arr[4]/7);
+                if($arr[4]>1) {
+                    $sd = $arr[4];
+                }
             }
             if(isset($arr[5]) && $arr[5]) {
                 $avg_fth = ceil($arr[5]/15);
+                if($arr[5] >1) {
+                    $fth = $arr[5];
+                }
             }
             if(isset($arr[6]) && $arr[6]) {
                 $avg_m = ceil((int)$arr[6]/30);
+                if($arr[6] >1) {
+                    $m = $arr[6];
+                }
             }
             $list[$key] = [
                 'original_id'=>$arr[2],
-                'oned_click'=>isset($arr[3]) ? ($arr[3]+1) : 1,
-                'sd_click'=>isset($arr[4]) ? ($arr[4]+1) : 1,
-                'fth_click'=>isset($arr[5]) ? ($arr[5]+1) : 1,
-                'm_click'=>isset($arr[6]) ? ((int)$arr[6]+1) : 1,
+                'oned_click'=>$oned,
+                'sd_click'=>$sd,
+                'fth_click'=>$fth,
+                'm_click'=>$m,
                 'sd_avg_click'=>$avg_sd,
                 'fth_agv_click'=>$avg_fth,
                 'm_agv_click'=>$avg_m,

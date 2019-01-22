@@ -13,6 +13,8 @@ use api\logic\ESLogic;
 use api\logic\KeywordsLogic;
 use api\model\KeywordsModel;
 use frame\Base;
+use frame\helpers\BaseVarDumper;
+use frame\Log;
 use frame\web\Controller;
 use api\logic\MediaAssetsSearchLogic;
 
@@ -232,6 +234,7 @@ class KeywordsController extends Controller
 //            'highlight'=>MediaAssetsSearchLogic::keywordsHightlight(),
 
         ];
+        Log::info("关键词搜索query:".BaseVarDumper::export($query));
 
         $result = $this->_keywordsLogic->getList($query,$from,$size);
         $this->reponse($result);

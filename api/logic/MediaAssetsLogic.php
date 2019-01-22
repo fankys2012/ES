@@ -214,30 +214,6 @@ class MediaAssetsLogic
                 ];
             }
             else {
-                if($category == 'vod') {
-                    $cites_item = [
-                            'original_id'=>$cites_data['original_id'],
-                            'cp_id'=>isset($cites_data['cp_id']) ? $cites_data['cp_id'] : '',
-                            'epg_tag'=>isset($cites_data['epg_tag']) ? $cites_data['epg_tag'] : '',
-                    ];
-
-                    if(isset($exists['data']['cites_data']) && is_array($exists['data']['cites_data'])) {
-                        $citesFlag = false;
-                        foreach ($exists['data']['cites_data'] as $key => $value) {
-                            if($value['original_id'] == $cites_data['original_id']) {
-                                $exists['data']['cites_data'][$key] = $cites_item;
-                                $citesFlag = true;
-                                break;
-                            }
-                        }
-                        if($citesFlag == false) {
-                            $exists['data']['cites_data'] = array_merge($exists['data']['cites_data'],array($cites_item));
-                        }
-                    }
-                    else {
-                        $exists['data']['cites_data'][] = $cites_item;
-                    }
-                }
                 if(!is_array($exists['data']['category'])) {
                     $exists['data']['category']= [$category];
                 }
@@ -246,7 +222,6 @@ class MediaAssetsLogic
                 }
                 $data = [
                     'category'=>$exists['data']['category'],
-                    'cites_data' =>$exists['data']['cites_data'],
                 ];
 
             }
@@ -254,15 +229,6 @@ class MediaAssetsLogic
         }
         else{
             $params = KeywordsModel::getAddFieldData($name,$category,1,$originalId,$source,$cites);
-            if($category == 'vod') {
-                $params['cites_data'] = [
-                    [
-                        'original_id'=>$originalId,
-                        'cp_id'=>isset($cites_data['cp_id']) ? $cites_data['cp_id'] : '',
-                        'epg_tag'=>isset($cites_data['epg_tag']) ? $cites_data['epg_tag'] : '',
-                    ]
-                ];
-            }
 
             return $this->keywordsLogic->addKeywords($params,$_id);
         }

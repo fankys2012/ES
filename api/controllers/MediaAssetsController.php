@@ -12,6 +12,8 @@ namespace api\controllers;
 use api\logic\MediaAssetsLogic;
 use api\logic\MediaAssetsSearchLogic;
 use frame\Base;
+use frame\helpers\BaseVarDumper;
+use frame\Log;
 use frame\web\Controller;
 
 class MediaAssetsController extends Controller
@@ -153,6 +155,7 @@ class MediaAssetsController extends Controller
         $aggsField = ['category','asset_type'];
         $aggs = MediaAssetsSearchLogic::assetsAggs($aggsField);
         $query['aggs'] = $aggs;
+        Log::info('媒资搜索query：'.BaseVarDumper::export($query));
 
         $result = $this->mediaAssetsLogic->getList($query,$from,$size);
 

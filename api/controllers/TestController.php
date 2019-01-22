@@ -74,4 +74,14 @@ class TestController extends Controller
         echo $avg_sd;
 //        Log::flush();
     }
+
+    public function testAction()
+    {
+        $arr = [
+            ['id'=>'aaa'],
+            ['id'=>'bbb'],
+            ['id'=>'aaa']
+        ];
+
+    }
 }

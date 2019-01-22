@@ -18,6 +18,10 @@ class KeywordsController extends Timer
 
     public function consumeQueueAction()
     {
+        if(false === $this->check_linux_course()) {
+            return false;
+        }
+
         $keywordsLogic = new KeywordsLogic();
 
         $redisClient = CacheRedis::getInstance();
@@ -31,6 +35,7 @@ class KeywordsController extends Timer
                 $result = $keywordsLogic->updateMediaCites($item);
                 $res = $redisClient->zRem('qe:update_keywords_list',$item);
             }
+            break;
         }
 
     }
