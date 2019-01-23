@@ -198,17 +198,25 @@ class KeywordsController extends Controller
         $name = Base::$app->request->getParam('name');
         $from = Base::$app->request->getParam('from',0);
         $size = Base::$app->request->getParam('size',12);
-        if(empty($name)){
-            return $this->reponse(['ret'=>1,'reason'=>'params name can not empty']);
+        $cateList = null;
+        if($category) {
+            $cateList = explode(',',$category);
         }
+
         $filterParams = [
             'state'     => 1,
-            'category'  =>$category,
+            'category'  =>$cateList,
             'cites_counter'=>0,
         ];
+        if($category != 'star') {
+            $filterParams['cp_id'] = Base::$app->request->getParam('cp_id');
+            $filterParams['package'] = Base::$app->request->getParam('package');
+            $filterParams['epg_tag'] = Base::$app->request->getParam('epg_tag');
+        }
 
         $queryBool = [];
-        $score_func = MediaAssetsSearchLogic::funcScore($category,'keywords');
+        $factorType = count($cateList) > 1 ? 'vod':$category;
+        $score_func = MediaAssetsSearchLogic::funcScore($factorType,'keywords');
         if($name) {
             $queryBool = MediaAssetsSearchLogic::keywordsBoolMatch($name);
         }

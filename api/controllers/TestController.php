@@ -82,6 +82,6 @@ class TestController extends Controller
             ['id'=>'bbb'],
             ['id'=>'aaa']
         ];
-
+        Log::setLogPath("a");
     }
 }

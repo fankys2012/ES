@@ -110,10 +110,13 @@ class MediaAssetsController extends Controller
         $name = Base::$app->request->getParam('name');
         $from = Base::$app->request->getParam('from',0);
         $size = Base::$app->request->getParam('size',12);
-
+        $cateList = null;
+        if($category) {
+            $cateList = explode(',',$category);
+        }
         $filterParams = [
             'state'     =>Base::$app->request->getParam('state'),
-            'category'  =>$category,
+            'category'  =>$cateList,
             'asset_type'=>Base::$app->request->getParam('asset_type'),
             'cp_id'     =>Base::$app->request->getParam('cp_id'),
             'package'   =>Base::$app->request->getParam('package'),
@@ -122,7 +125,8 @@ class MediaAssetsController extends Controller
 
 
         $queryBool = [];
-        $score_func = MediaAssetsSearchLogic::funcScore($category,'search');
+        $factorType = count($cateList) > 1 ? 'vod':$category;
+        $score_func = MediaAssetsSearchLogic::funcScore($factorType,'search');
         if($name) {
             $queryBool = MediaAssetsSearchLogic::boolMatch($name);
         }

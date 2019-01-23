@@ -179,4 +179,9 @@ abstract class Target extends Component
         return date('Y-m-d H:i:s', $timestamp) . " [{$this->traceCode}][$level] $text"
             . (empty($traces) ? '' : "\n    " . implode("\n    ", $traces));
     }
+
+    public function setLogPath($path,$file='')
+    {
+
+    }
 }

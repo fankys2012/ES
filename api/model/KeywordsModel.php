@@ -105,17 +105,8 @@ class KeywordsModel
                         'source'       =>['type'=>'keyword'],//数据来源
                         'cites_counter'=>['type'=>'long'],//关键词引用总数
 
-                        'cites_data'=>[
-                            'properties'=>[
-                                //关键词引用的cp
-                                'cp_id'=>[
-                                    'type'=>'keyword'
-                                ],
-                                'epg_tag'=>[
-                                    'type'=>'keyword'
-                                ],
-                            ],
-                        ],
+                        'cp_id'        =>['type'=>'keyword'],
+                        'epg_tag'      =>['type'=>'keyword'],//终端类型
                         'package'=>[
                             'properties'=>[
                                 'id'=>[

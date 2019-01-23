@@ -118,4 +118,13 @@ class Dispatcher extends Component
         }
     }
 
+    public function setLogPath($path,$file='')
+    {
+        foreach ($this->targets as $target) {
+            if ($target->enabled) {
+                $target->setLogPath($path,$file);
+            }
+        }
+    }
+
 }

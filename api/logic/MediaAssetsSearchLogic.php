@@ -148,10 +148,11 @@ class MediaAssetsSearchLogic
      */
     public static function boolFilter($params)
     {
+        $orQuery = [];
         //分类过滤
         if(isset($params['category']) && $params['category']) {
             $bool['must'][] = [
-                'term'=>[
+                'terms'=>[
                     'category'=>$params['category']
                 ]
             ];
@@ -215,7 +216,29 @@ class MediaAssetsSearchLogic
                 ]
             ];
         }
+        if(!$params['category'] || (is_array($params['category']) && in_array('star',$params['category']))) {
+            return ['filter'=>[
+                'bool'=>[
+                    'should'=>[
+                        [
+                            'bool'=>[
+                                'must'=>[
+                                    [
+                                       ['term'=>['category'=>'star']],
+                                        ['term'=>['state'=>1]],
 
+                                    ]
+                                ]
+                            ]
+                        ],
+                        [
+                            'bool'=>$bool
+                        ]
+
+                    ]
+                ],
+            ]];
+        }
         return ['filter'=>[
             'bool'=>$bool,
         ]];

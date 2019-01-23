@@ -12,6 +12,8 @@ namespace api\timer;
 
 use api\logic\KeywordsLogic;
 use api\util\CacheRedis;
+use frame\helpers\BaseVarDumper;
+use frame\Log;
 
 class KeywordsController extends Timer
 {
@@ -29,15 +31,15 @@ class KeywordsController extends Timer
         {
             $list = $redisClient->zRange("qe:update_keywords_list",0,100);
             if(empty($list) || !is_array($list)) {
+
                 break;
             }
+            Log::info("获取消息队列数据为：".BaseVarDumper::export($list));
             foreach ($list as $item) {
                 $result = $keywordsLogic->updateMediaCites($item);
                 $res = $redisClient->zRem('qe:update_keywords_list',$item);
             }
-            break;
         }
-
     }
 }
 

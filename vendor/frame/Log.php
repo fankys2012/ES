@@ -80,12 +80,12 @@ class Log
      * The begin- and end- calls must also be properly nested. For example,
      *
      * ```php
-     * \Yii::beginProfile('block1');
+     * \Log::beginProfile('block1');
      * // some code to be profiled
-     *     \Yii::beginProfile('block2');
+     *     \Log::beginProfile('block2');
      *     // some other code to be profiled
-     *     \Yii::endProfile('block2');
-     * \Yii::endProfile('block1');
+     *     \Log::endProfile('block2');
+     * \Log::endProfile('block1');
      * ```
      * @param string $token token for the code block
      * @param string $category the category of this log message
@@ -106,6 +106,11 @@ class Log
     public static function endProfile($token, $category = 'application')
     {
         static::getLogger()->log($token, Logger::LEVEL_PROFILE_END, $category);
+    }
+
+    public static function setLogPath($path,$file='')
+    {
+        static::getLogger()->setLogPath($path,$file);
     }
 
 }

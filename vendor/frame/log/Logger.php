@@ -278,4 +278,12 @@ class Logger extends Component
 
         return isset($levels[$level]) ? $levels[$level] : 'unknown';
     }
+
+    public function setLogPath($path,$file='')
+    {
+        if ($this->dispatcher instanceof Dispatcher) {
+            $this->dispatcher->setLogPath($path,$file);
+        }
+    }
+
 }

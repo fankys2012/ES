@@ -325,13 +325,12 @@ class KeywordsLogic
             $params = [
                 'cites_counter'=>$total,
                 'package'=>$packageId,
-                'cites_data'=>[
-                    'cp_id'=>$cp_id,
-                    'epg_tag'=>$epg_tag,
-                ],
+                'cp_id'=>$cp_id,
+                'epg_tag'=>$epg_tag,
             ];
             Log::info("关键词[{$_id}]更新引用：".BaseVarDumper::export($params));
             $edres = $this->updateKeywords($_id,$params);
+            Log::info($edres);
             return $edres;
         }
         return $result;

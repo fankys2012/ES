@@ -128,4 +128,15 @@ class FileTarget extends Target
             }
         }
     }
+    public function setLogPath($path,$file='')
+    {
+        if(!is_dir($path)){
+            FileHelper::createDirectory($path,$this->dirMode,true);
+        }
+        if(empty($file)) {
+            $intTime=FRAME_DATE_TIME - (FRAME_DATE_TIME % 300);
+            $file = date("Ymd", $intTime).'T'.date("His",$intTime).'.log';
+        }
+        $this->logFile = $path.'/'.$file;
+    }
 }
