@@ -60,17 +60,8 @@ class Application extends \frame\base\Application
         try {
             $this->requestedRoute = $route;
             $result = $this->runAction($route, $params);
-            throw new InvalidCallException('Method not found');
-//            if ($result instanceof Response) {
-//                return $result;
-//            } else {
-//                $response = $this->getResponse();
-//                if ($result !== null) {
-//                    $response->data = $result;
-//                }
-//
-//                return $response;
-//            }
+            return $result;
+
         } catch ( InvalidCallException $e) {
             throw new NotFoundHttpException('Page not found', $e->getCode(), $e);
         }

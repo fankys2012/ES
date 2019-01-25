@@ -127,12 +127,40 @@ class MediaAssetsSearchLogic
         else {
             $bool = [
                 'must'=>[
-                    'multi_match'=>[
-                        'query'=>$name,
-                        //@see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
-                        'type'=>'phrase_prefix',
-                        'fields'=>['name','director.name','actor.name','alias_name','summary^0.5']
+                    'bool'=>[
+                        'should'=>[
+                            [
+                                'multi_match'=>[
+                                    'query'=>$name,
+                                    //@see https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-multi-match-query.html
+                                    'type'=>'phrase_prefix',
+                                    'fields'=>['name','director.name','actor.name','alias_name','summary^0.5']
+                                ]
+                            ],
+                            [
+                                'prefix'=>[
+                                    'name'=>$name
+                                ]
+                            ],
+                            [
+                                'prefix'=>[
+                                    'director.name'=>$name
+                                ]
+                            ],
+                            [
+                                'prefix'=>[
+                                    'actor.name'=>$name
+                                ]
+                            ],
+                            [
+                                'prefix'=>[
+                                    'alias_name'=>$name
+                                ]
+                            ]
+
+                        ]
                     ]
+
                 ]
 
             ];
@@ -269,12 +297,25 @@ class MediaAssetsSearchLogic
         }
         else {
             $bool = [
-                'must'=> [
-                    ['match_phrase_prefix'=> [
-                        'name'=>$name
-                    ]
+                'must'=>[
+                    [
+                        'bool'=>[
+                            'should'=> [
+                                [
+                                    'match_phrase_prefix'=> [
+                                        'name'=>$name
+                                    ]
+                                ],
+                                [
+                                    'prefix'=>[
+                                        'name'=>$name
+                                    ]
+                                ]
+                            ]
+                        ]
                     ]
                 ]
+
             ];
         }
 

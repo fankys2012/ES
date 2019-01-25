@@ -209,10 +209,21 @@ class MediaAssetsController extends Controller
             }
             else {
                 $query['query']['bool']['must'][] = [
-                    'multi_match'=>[
-                        'query'=>$name,
-                        'type'=>'phrase_prefix',
-                        'fields'=>['name']
+                    'bool'=>[
+                        'should'=>[
+                            [
+                                'match_phrase'=>[
+                                    'name'=>[
+                                        'query'=>$name,
+                                    ]
+                                ],
+                            ],
+                            [
+                                'prefix'=>[
+                                    'name'=>$name
+                                ]
+                            ]
+                        ]
                     ]
                 ];
             }

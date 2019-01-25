@@ -19,6 +19,8 @@ return [
     'frame\base\Arrayable' => FRAME_PATH . '/base/Arrayable.php',
     'frame\base\BootstrapInterface' => FRAME_PATH . '/base/BootstrapInterface.php',
     'frame\base\Configurable' => FRAME_PATH . '/base/Configurable.php',
+    'frame\base\Action' => FRAME_PATH . '/base/Action.php',
+    'frame\base\InlineAction' => FRAME_PATH . '/base/InlineAction.php',
 
     'frame\di\ServiceLocator' => FRAME_PATH . '/di/ServiceLocator.php',
     'frame\di\Container' => FRAME_PATH . '/di/Container.php',

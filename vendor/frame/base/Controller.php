@@ -45,31 +45,14 @@ class Controller extends Component
 
     public function runAction($id, $params = [])
     {
-        $action = $id."Action";
-        $this->$action();
-        exit;
+
         $action = $this->createSysAction($id);
-        var_dump($action);exit;
         if ($action === null) {
-            throw new InvalidConfigException('Unable to resolve the request: ' .  $id);
+            throw new \Exception('Unable to resolve the request: ' .  $id);
         }
-
-
 
         $this->action = $action;
-
-        $modules = [];
         $runAction = true;
-
-        // call beforeAction on modules
-        foreach ($this->getModules() as $module) {
-            if ($module->beforeAction($action)) {
-                array_unshift($modules, $module);
-            } else {
-                $runAction = false;
-                break;
-            }
-        }
 
         $result = null;
 
@@ -79,14 +62,7 @@ class Controller extends Component
 
             $result = $this->afterAction($action, $result);
 
-            // call afterAction on modules
-            foreach ($modules as $module) {
-                /* @var $module Module */
-                $result = $module->afterAction($action, $result);
-            }
         }
-
-
 
         return $result;
     }
@@ -96,11 +72,8 @@ class Controller extends Component
         if ($id === '') {
             $id = $this->defaultAction;
         }
-        $actionMap = $this->actions();
-        if (isset($actionMap[$id])) {
-            return Base::createObject($actionMap[$id], [$id, $this]);
-        } elseif (preg_match('/^[(a-z|A-Z)0-9\\-_]+$/', $id) && strpos($id, '--') === false && trim($id, '-') === $id) {
-            $methodName = str_replace(' ', '', ucwords(implode(' ', explode('-', $id)))).'Action';
+        if (preg_match('/^[(a-z|A-Z)0-9\\-_]+$/', $id) && strpos($id, '--') === false && trim($id, '-') === $id) {
+            $methodName = str_replace(' ', '', $id).'Action';
             if (method_exists($this, $methodName)) {
                 $method = new \ReflectionMethod($this, $methodName);
                 if ($method->isPublic() && $method->getName() === $methodName) {
@@ -117,21 +90,21 @@ class Controller extends Component
         return [];
     }
 
-    /**
-     * Returns all ancestor modules of this controller.
-     * The first module in the array is the outermost one (i.e., the application instance),
-     * while the last is the innermost one.
-     * @return Module[] all ancestor modules that this controller is located within.
-     */
-    public function getModules()
+    public function beforeAction($action)
     {
-        $modules = [$this->module];
-        $module = $this->module;
-        while ($module->module !== null) {
-            array_unshift($modules, $module->module);
-            $module = $module->module;
-        }
-        return $modules;
+        //暂未实现
+        return true;
+    }
+
+    public function afterAction($result)
+    {
+        //暂未实现
+        return $result;
+    }
+
+    public function bindActionParams($action, $params)
+    {
+        return [];
     }
 
 }

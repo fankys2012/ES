@@ -82,6 +82,9 @@ class TestController extends Controller
             ['id'=>'bbb'],
             ['id'=>'aaa']
         ];
-        Log::setLogPath("a");
+        $str = "aaa\n";
+        var_dump($str);
+        var_dump(trim($str));
+        print_r($arr);
     }
 }

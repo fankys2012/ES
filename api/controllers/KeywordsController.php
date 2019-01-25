@@ -73,15 +73,25 @@ class KeywordsController extends Controller
                 ];
             }
             else {
-                $query['query']['bool']['must'][] = [
-                    'match_phrase'=>[
-                        'name'=>[
-                            'query'=>$name,
-//                            'minimum_should_match'=>'100%'
+                $query['query']['bool']['must'][] =[
+                    'bool'=>[
+                        'should'=>[
+                            [
+                                'match_phrase'=>[
+                                    'name'=>[
+                                        'query'=>$name,
+                                    ]
+                                ],
+                            ],
+                            [
+                                'prefix'=>[
+                                    'name'=>$name
+                                ]
+                            ]
                         ]
                     ]
-
                 ];
+
             }
         }
 

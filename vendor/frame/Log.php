@@ -34,6 +34,20 @@ class Log
         self::$_logger = $logger;
     }
 
+    /**
+     * Logs a trace message.
+     * Trace messages are logged mainly for development purpose to see
+     * the execution work flow of some code.
+     * @param string|array $message the message to be logged. This can be a simple string or a more
+     * complex data structure, such as array.
+     * @param string $category the category of the message.
+     */
+    public static function trace($message, $category = 'application')
+    {
+        if (FRAME_DEBUG) {
+            static::getLogger()->log($message, Logger::LEVEL_TRACE, $category);
+        }
+    }
 
     /**
      * Logs an error message.

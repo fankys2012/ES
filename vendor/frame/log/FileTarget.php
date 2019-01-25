@@ -11,6 +11,8 @@ namespace frame\log;
 
 use frame\Base;
 use frame\helpers\FileHelper;
+use frame\base\InvalidConfigException;
+
 
 class FileTarget extends Target
 {
