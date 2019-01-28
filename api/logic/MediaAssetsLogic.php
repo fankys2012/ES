@@ -13,6 +13,8 @@ use api\model\KeywordsModel;
 use api\model\MediaAssetsDoc;
 use api\util\CacheRedis;
 use frame\Base;
+use frame\helpers\BaseVarDumper;
+use frame\Log;
 
 class MediaAssetsLogic
 {
@@ -69,6 +71,7 @@ class MediaAssetsLogic
             //若媒资包栏目未空 则表示未上线，未上线的数据状态置为不可用状态
             if(!isset($params['package']) || count($params['package']) <1) {
                 $params['state'] = 0;
+                $params['package'] = [];
             }
             elseif(isset($params['package']) && count($params['package']) >0) {
                 $params['state'] = 1;
@@ -77,6 +80,9 @@ class MediaAssetsLogic
         }
         else if($params['category'] =='star') {
             $kres = $this->createKeywords($params['name'],'star',$params['original_id'],$params['source'],$params['state']);
+            if(isset($params['video_update']) && $params['video_update']) {
+                $this->updateActorRelationVideo($params['video_update']);
+            }
         }
         $params['kw_cites'] = $this->keywordsList;
         if(is_array($params['kw_cites'])) {
@@ -93,9 +99,10 @@ class MediaAssetsLogic
             $result = $this->mediaAsstesDocModel->addDoc($fieldData,$_id);
         }
         //关键词更新队列
-        if(isset($exists['kw_cites']) && $exists['kw_cites']) {
-            $params['kw_cites'] = array_merge($params['kw_cites'],$exists['kw_cites']);
+        if(isset($exists['data']['kw_cites']) && $exists['data']['kw_cites']) {
+            $params['kw_cites'] = array_merge($params['kw_cites'],$exists['data']['kw_cites']);
             $params['kw_cites'] = array_unique($params['kw_cites']);
+            Log::info("关键词更新列表：".BaseVarDumper::export($params['kw_cites']));
         }
         $qeresult = $this->keywordsUpdateQueue($params['kw_cites']);
 
@@ -179,7 +186,12 @@ class MediaAssetsLogic
         if(empty($rule)) {
             return $string;
         }
-        return trim(preg_replace($rule['patterns'],$rule['replace'],$string));
+        $rinseString = trim(preg_replace($rule['patterns'],$rule['replace'],$string));
+        if(empty($rinseString)) {
+            Log::error("规则清洗后关键词为空".BaseVarDumper::export(['keywords'=>$string,'rule'=>$rule]));
+            return $string;
+        }
+        return $rinseString;
     }
 
 
@@ -194,6 +206,9 @@ class MediaAssetsLogic
      */
     protected function createKeywords($name,$category,$originalId,$source='cms',$cites=0,$cites_data=[])
     {
+        if(empty($name)) {
+            return ['ret'=>1,'reason'=>'keywords empty'];
+        }
         if($originalId) {
             $_id = md5($originalId.$source);
         }
@@ -317,5 +332,31 @@ class MediaAssetsLogic
         }
         return ['ret'=>0,'reason'=>'success'];
 
+    }
+
+    public function updateActorRelationVideo($relation)
+    {
+        if(empty($relation) || !is_array($relation)) {
+            return ['ret'=>0,'reason'=>'empty'];
+        }
+        $loop = 0;
+        $bulkList = [];
+        foreach ($relation as $item)  {
+            $_id = md5($item['original_id'].$item['source']);
+            $bulkList[$_id] = [
+                'director'=>(isset($item['director']) && is_array($item['director'])) ? $item['director'] :[],
+                'actor'=>(isset($item['actor']) && is_array($item['actor'])) ? $item['actor'] :[],
+            ];
+            $loop ++;
+            if($loop > 200) {
+                $this->mediaAsstesDocModel->updateByBulk($bulkList);
+                $bulkList = [];
+                $loop = 0;
+            }
+        }
+        if(count($bulkList) >0) {
+            $this->mediaAsstesDocModel->updateByBulk($bulkList);
+        }
+        return ['ret'=>0,'reason'=>'success'];
     }
 }

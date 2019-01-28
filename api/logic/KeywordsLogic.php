@@ -292,7 +292,8 @@ class KeywordsLogic
                 ]
             ]
         ];
-        $result = $mediaAssetsDocModel->getList($query,0,1);
+        Log::info("更新关键词[{$_id}]引用信息");
+        $result = $mediaAssetsDocModel->getList($query,0,1000);
         if($result['ret'] == 0) {
             $total = $result['data']['total'];
             $package = [];
@@ -330,7 +331,10 @@ class KeywordsLogic
             ];
             Log::info("关键词[{$_id}]更新引用：".BaseVarDumper::export($params));
             $edres = $this->updateKeywords($_id,$params);
-            Log::info($edres);
+            if($edres['ret'] !=0 ) {
+                Log::error("关键词[{$_id}]更新引用失败");
+            }
+
             return $edres;
         }
         return $result;

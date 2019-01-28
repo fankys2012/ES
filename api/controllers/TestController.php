@@ -14,6 +14,7 @@ use api\logic\ESLogic;
 use api\logic\KeywordsLogic;
 use api\logic\MediaAssetsLogic;
 use frame\Base;
+use frame\helpers\BaseVarDumper;
 use frame\helpers\FtpClient;
 use frame\Log;
 use frame\web\Controller;
@@ -77,14 +78,7 @@ class TestController extends Controller
 
     public function testAction()
     {
-        $arr = [
-            ['id'=>'aaa'],
-            ['id'=>'bbb'],
-            ['id'=>'aaa']
-        ];
-        $str = "aaa\n";
-        var_dump($str);
-        var_dump(trim($str));
-        print_r($arr);
+        $str = '100600018746';
+        echo substr($str,0,4);
     }
 }

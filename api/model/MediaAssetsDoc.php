@@ -515,7 +515,12 @@ class MediaAssetsDoc
         if(is_array($result['items'])) {
             $list = [];
             foreach ($result['items'] as $value) {
-                $list[$value['update']['_id']] = $value['update']['result'];
+                if(isset($value['update']['result'])) {
+                    $list[$value['update']['_id']] = $value['update']['result'];
+                } else {
+                    $list[$value['update']['_id']] = 0;
+                }
+
             }
             return ['ret'=>0,'data'=>$list];
         }

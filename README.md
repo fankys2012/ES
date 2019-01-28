@@ -1,11 +1,12 @@
 版本匹配说明
-Elasticsearch-PHP Branch	PHP Version
+	
+    Elasticsearch-PHP Branch	PHP Version
     6.0				>= 7.0.0
     5.0				>= 5.6.6
     2.0				>= 5.4.0
-    0.4, 1.0			>= 5.3.9
+    0.4, 1.0		>= 5.3.9
 
-Elasticsearch Version	Elasticsearch-PHP Branch
+    Elasticsearch Version	Elasticsearch-PHP Branch
     >= 6.0			6.0
     >= 5.0, < 6.0		5.0
     >= 2.0, < 5.0		1.0 or 2.0

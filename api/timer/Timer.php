@@ -36,7 +36,7 @@ class Timer extends Controller
 
     public function msg($msg)
     {
-        Log::error($msg);
+        Log::warning($msg);
         return;
     }
 
@@ -66,9 +66,9 @@ class Timer extends Controller
                 $execTime = "ps -eo pid,lstart,etime,cmd | grep '{$execFile}'";
                 @exec($execTime,$execTimeList,$execTimeResult);
                 if($execTimeResult !=0) {
-                    Log::error("进程查询失败：".$execTime);
+                    Log::warning("进程查询失败：".$execTime);
                 } else {
-                    Log::error("进程信息：".BaseVarDumper::export($execTimeList));
+                    Log::warning("进程信息：".BaseVarDumper::export($execTimeList));
                 }
                 return false;
             }
