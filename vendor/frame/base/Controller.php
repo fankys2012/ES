@@ -96,7 +96,7 @@ class Controller extends Component
         return true;
     }
 
-    public function afterAction($result)
+    public function afterAction($action,$result)
     {
         //暂未实现
         return $result;

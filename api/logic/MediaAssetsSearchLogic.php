@@ -176,7 +176,15 @@ class MediaAssetsSearchLogic
      */
     public static function boolFilter($params)
     {
-        $orQuery = [];
+        $orQuery = [
+            'must'=>[
+                [
+                    'term'=>[
+                        'category'=>'star'
+                    ]
+                ]
+            ]
+        ];
         //分类过滤
         if(isset($params['category']) && $params['category']) {
             $bool['must'][] = [
@@ -188,6 +196,11 @@ class MediaAssetsSearchLogic
         //状态过滤
         if(isset($params['state']) && strlen($params['state'])>0) {
             $bool['must'][] = [
+                'term'=>[
+                    'state'=>$params['state']
+                ]
+            ];
+            $orQuery['must'][] = [
                 'term'=>[
                     'state'=>$params['state']
                 ]
@@ -226,6 +239,13 @@ class MediaAssetsSearchLogic
                     ]
                 ]
             ];
+            $orQuery['must'][] = [
+                'range'=>[
+                    'cites_counter'=>[
+                        'gt'=>0
+                    ]
+                ]
+            ];
         }
 
         //EGP tag 过滤
@@ -249,15 +269,7 @@ class MediaAssetsSearchLogic
                 'bool'=>[
                     'should'=>[
                         [
-                            'bool'=>[
-                                'must'=>[
-                                    [
-                                       ['term'=>['category'=>'star']],
-                                        ['term'=>['state'=>1]],
-
-                                    ]
-                                ]
-                            ]
+                            'bool'=>$orQuery
                         ],
                         [
                             'bool'=>$bool

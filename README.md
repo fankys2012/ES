@@ -96,3 +96,6 @@ https://www.elastic.co/guide/en/elasticsearch/reference/current/full-text-querie
 
 8：排序 https://www.cnblogs.com/richaaaard/p/5254988.html
  function-score-query： https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-function-score-query.html
+ 
+9：swoole https://github.com/tsingsun/yii2-swoole.git
+![Image text](https://raw.githubusercontent.com/hongmaju/light7Local/master/img/productShow/20170518152848.png)

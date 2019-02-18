@@ -47,6 +47,7 @@ abstract class Application extends Module
         }
     }
 
+
     protected function bootstrap()
     {
         foreach ($this->bootstrap as $class) {
@@ -74,9 +75,11 @@ abstract class Application extends Module
     {
         try{
             $response = $this->handleRequest($this->getRequest());
+            $response->send();
+            return $response->exitStatus;
 
         } catch (Exception $e) {
-
+            return 0;
         }
 
     }

@@ -13,6 +13,8 @@ use api\model\KeywordsModel;
 use api\model\MediaAssetsDoc;
 use api\util\CacheRedis;
 use frame\Base;
+use frame\helpers\BaseVarDumper;
+use frame\Log;
 
 class ClickSyncLogic
 {
@@ -67,6 +69,8 @@ class ClickSyncLogic
         $errList = [];
         //同步更新关键词点击数
         $keyWordsList = [];
+        Log::trace("更新列表数据");
+        Log::trace(BaseVarDumper::export($list));
 
         $editDoc = [];
         foreach ($list as $key => $item){
@@ -98,13 +102,13 @@ class ClickSyncLogic
             }
 
             $editDoc[$key] = [
-                'oned_click'=>$item['oned_click'],
-                'sd_click'=>$item['sd_click'],
-                'fth_click'=>$item['fth_click'],
-                'm_click'=>$item['m_click'],
-                'sd_avg_click'=>$item['sd_avg_click'],
-                'fth_agv_click'=>$item['fth_agv_click'],
-                'm_agv_click'=>$item['m_agv_click'],
+                'oned_click'=>$item['oned_click']>1 ? $item['oned_click']:1,
+                'sd_click'=>$item['sd_click']>1 ? $item['sd_click']:1,
+                'fth_click'=>$item['fth_click']>1 ? $item['fth_click']:1,
+                'm_click'=>$item['m_click']>1 ? $item['m_click']:1,
+                'sd_avg_click'=>$item['sd_avg_click']>1 ? $item['sd_avg_click']:1,
+                'fth_agv_click'=>$item['fth_agv_click']>1 ? $item['fth_agv_click']:1,
+                'm_agv_click'=>$item['m_agv_click']>1 ? $item['m_agv_click']:1,
             ];
 
         }
@@ -151,6 +155,9 @@ class ClickSyncLogic
             return ['ret'=>1,'reason'=>'list empty'];
         }
 
+        Log::trace("关键词更新列表数据");
+        Log::trace($list);
+
         //获取关键词点击量
         $ids = array_keys($list);
         $redisClient = CacheRedis::getInstance();
@@ -178,6 +185,32 @@ class ClickSyncLogic
         }
         //数据保存redis
         $res = $redisClient->hMset(self::REDISHASHKEY,$cbKeyVal);
+        Log::info("与redis合并后的数据为");
+        Log::info($list);
+        foreach ($list as $key =>$value)
+        {
+            $editDoc = [
+                'oned_click'=>$value['oned_click']>1 ? $value['oned_click']:1,
+                'sd_click'=>$value['sd_click']>1 ? $value['sd_click']:1,
+                'fth_click'=>$value['fth_click']>1 ? $value['fth_click']:1,
+                'm_click'=>$value['m_click']>1 ? $value['m_click']:1,
+                'sd_avg_click'=>1,
+                'fth_agv_click'=>1,
+                'm_agv_click'=>1,
+            ];
+            if($value['sd_click']) {
+                $editDoc['sd_avg_click'] = ceil($value['sd_click']/7);
+            }
+            if($value['fth_agv_click']) {
+                $editDoc['fth_agv_click'] = ceil($value['fth_click']/15);
+            }
+            if($value['m_agv_click']) {
+                $editDoc['m_agv_click'] = ceil($value['m_click']/30);
+            }
+            $list[$key] = $editDoc;
+        }
+        Log::info("更新关键词点击数列表");
+        Log::info($list);
 
         //更新文档
         $result = $this->keywordsModel->updateByBulk($list);

@@ -316,8 +316,8 @@ class KeywordsLogic
                     }
                 }
                 $package = array_unique($package);
-                $cp_id = array_unique($cp_id);
-                $epg_tag = array_unique($epg_tag);
+                $cp_id = array_values(array_unique($cp_id));
+                $epg_tag = array_values(array_unique($epg_tag));
             }
             $packageId = [];
             foreach ($package as $value) {

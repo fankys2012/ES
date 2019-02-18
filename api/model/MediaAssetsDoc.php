@@ -482,7 +482,9 @@ class MediaAssetsDoc
         if(isset($result['docs']) && $result['docs']) {
             $list = [];
             foreach ($result['docs'] as $item) {
-                $list[$item['_id']] = $item['_source'];
+                if(isset($item['_source'])) {
+                    $list[$item['_id']] = $item['_source'];
+                }
             }
             return ['ret'=>0,'data'=>$list];
         }

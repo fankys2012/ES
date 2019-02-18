@@ -83,13 +83,13 @@ class ClickSyncController extends Timer
         $redisClient->delete(ClickSyncLogic::REDISHASHKEY);
 
         while (($buffer = fgets($fp, 4096)) !== false) {
-            $arr = trim(explode("|",$buffer));
+            $arr = explode("|",trim($buffer));
             if(!isset($arr[2]) || !$arr[2]) {
                 continue;
             }
             $key = md5($arr[2].'cms');
-            $avg_sd = $avg_fth = $avg_m = 1;
-            $oned = $sd = $fth = $m = 1;
+            $avg_sd = $avg_fth = $avg_m = 0;
+            $oned = $sd = $fth = $m = 0;
             if(isset($arr[3]) && $arr[3] >1) {
                 $oned = $arr[3];
             }

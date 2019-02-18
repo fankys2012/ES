@@ -27,7 +27,7 @@ class TestController extends Controller
     {
         parent::__construct($id, $module, $config);
 
-        $this->mediaAssetsLogic = new MediaAssetsLogic();
+//        $this->mediaAssetsLogic = new MediaAssetsLogic();
     }
 
     /**
@@ -80,5 +80,6 @@ class TestController extends Controller
     {
         $str = '100600018746';
         echo substr($str,0,4);
+        return;
     }
 }

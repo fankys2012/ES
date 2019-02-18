@@ -21,6 +21,11 @@ return [
     'frame\base\Configurable' => FRAME_PATH . '/base/Configurable.php',
     'frame\base\Action' => FRAME_PATH . '/base/Action.php',
     'frame\base\InlineAction' => FRAME_PATH . '/base/InlineAction.php',
+    'frame\base\RequestParserInterface' => FRAME_PATH . '/base/RequestParserInterface.php',
+    'frame\base\JsonParser' => FRAME_PATH . '/base/JsonParser.php',
+    'frame\base\InvalidParamException' => FRAME_PATH . '/base/InvalidParamException.php',
+    'frame\base\RequestParserInterface' => FRAME_PATH . '/base/RequestParserInterface.php',
+    'frame\base\Response' => FRAME_PATH . '/base/Response.php',
 
     'frame\di\ServiceLocator' => FRAME_PATH . '/di/ServiceLocator.php',
     'frame\di\Container' => FRAME_PATH . '/di/Container.php',
@@ -31,6 +36,12 @@ return [
     'frame\web\Request' => FRAME_PATH . '/web/Request.php',
     'frame\web\HttpException' => FRAME_PATH . '/web/HttpException.php',
     'frame\web\NotFoundHttpException' => FRAME_PATH . '/web/NotFoundHttpException.php',
+    'frame\web\HtmlResponseFormatter' => FRAME_PATH . '/web/HtmlResponseFormatter.php',
+    'frame\web\JsExpression' => FRAME_PATH . '/web/JsExpression.php',
+    'frame\web\JsonResponseFormatter' => FRAME_PATH . '/web/JsonResponseFormatter.php',
+    'frame\web\Response' => FRAME_PATH . '/web/Response.php',
+    'frame\web\ResponseFormatterInterface' => FRAME_PATH . '/web/ResponseFormatterInterface.php',
+    'frame\web\HeaderCollection' => FRAME_PATH . '/web/HeaderCollection.php',
 
     'frame\helpers\FileHelper' => FRAME_PATH . '/helpers/FileHelper.php',
     'frame\helpers\FtpClient' => FRAME_PATH . '/helpers/FtpClient.php',
@@ -38,6 +49,7 @@ return [
     'frame\helpers\FtpWrapper' => FRAME_PATH . '/helpers/FtpWrapper.php',
     'frame\helpers\BaseVarDumper' => FRAME_PATH . '/helpers/BaseVarDumper.php',
     'frame\helpers\ArrayHelper' => FRAME_PATH . '/helpers/ArrayHelper.php',
+    'frame\helpers\Json' => FRAME_PATH . '/helpers/Json.php',
 
 
     'frame\console\Application' => FRAME_PATH . '/console/Application.php',
@@ -48,4 +60,7 @@ return [
     'frame\log\FileTarget' => FRAME_PATH . '/log/FileTarget.php',
     'frame\log\Logger' => FRAME_PATH . '/log/Logger.php',
     'frame\log\Target' => FRAME_PATH . '/log/Target.php',
+
+    'frame\swoole\web\Application' => FRAME_PATH . '/swoole/web/Application.php',
+    'frame\swoole\web\Request' => FRAME_PATH . '/swoole/web/Request.php',
 ];
