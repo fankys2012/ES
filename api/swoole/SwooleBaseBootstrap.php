@@ -9,6 +9,8 @@
 namespace api\swoole;
 
 
+use frame\Log;
+
 abstract class SwooleBaseBootstrap
 {
     /**
@@ -40,10 +42,35 @@ abstract class SwooleBaseBootstrap
         $result = $this->handleRequest($request,$reponse);
     }
 
+    public function onWorkerStart($server,$workerId)
+    {
+        $this->workId = $workerId;
+    }
+
+
+    public function onWorkerError($swooleServer, $workerId, $workerPid, $exitCode, $sigNo)
+    {
+        Log::error("worker error happening [workerId=$workerId, workerPid=$workerPid, exitCode=$exitCode, signalNo=$sigNo]...", 'monitor');
+    }
+
+    public function onTask($server, $taskId, $srcWorkerId, $data)
+    {
+        $func = array_shift($data);
+        if (is_callable($func)) {
+            $params[] = array_shift($data);
+            call_user_func_array($func, $params);
+        }
+        return 1;
+    }
+
+    public function onFinish($server, $taskId, $data)
+    {
+        //echo $data;
+    }
+
     public function onWorkerStop($server,$workerId)
     {
 
     }
-
 
 }

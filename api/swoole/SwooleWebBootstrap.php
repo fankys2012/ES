@@ -14,19 +14,22 @@ use frame\swoole\web\Application;
 class SwooleWebBootstrap extends SwooleBaseBootstrap
 {
 
-    public function handleRequest($request, $reponse)
+    public function handleRequest($resquest, $response)
     {
+        echo "SwooleWebBootstrap:handleRequest";
         $application = new Application($this->appConfig);
-        $application->getRequest()->setSwooleReques($request);
+        $application->getRequest()->setSwooleReques($resquest);
+        $application->getResponse()->setSwooleResponse($response);
 
-        try{
-            $reponse = $application->handleRequest($application->getRequest());
-            $reponse->send();
-            return $reponse->exitStatus;
-        }
-        catch (\Exception $e) {
-
-        }
+//        try{
+//            $reponse = $application->handleRequest($application->getRequest());
+//            $reponse->send();
+//            return $reponse->exitStatus;
+//        }
+//        catch (\Exception $e) {
+//
+//        }
+        $response->end("<h1>Hello Swoole!</h1>".var_export($resquest->get,true));
 
     }
 }

@@ -9,6 +9,7 @@
 namespace frame\swoole\server;
 
 use Swoole;
+
 class Server
 {
     protected $id;
@@ -32,9 +33,9 @@ class Server
     public $timeout = 0;
 
     /**
-     * @var \frame\swoole\web\Application
+     * @var \api\swoole\SwooleBaseBootstrap
      */
-    public $application;
+    public $bootstrap;
     /**
      * @var string root directory
      */
@@ -86,7 +87,7 @@ class Server
                     'Receive', 'Connect', 'Close', 'Timer', 'WorkerStop', 'WorkerError'];
                 break;
         }
-
+        print_r($this->setting);
         $this->swoole->set($this->setting);
 
         $this->swoole->on('Start',[$this,'onStart']);
@@ -124,7 +125,9 @@ class Server
      */
     public function onStart()
     {
-        $this->setProcessTitle($this->id,'master');
+        echo "Server:onStart()";
+        swoole_set_process_name("swoole_http_server");
+//        $this->setProcessTitle($this->id,'master');
     }
 
     /**
