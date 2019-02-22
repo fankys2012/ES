@@ -16,7 +16,7 @@ class HttpServer extends Server
         $uri = $request->server['request_uri'];
         $file = APP_DIR . $uri;
         $pathinfo = pathinfo($file, PATHINFO_EXTENSION);
-        if ($uri == '/' or $uri == $this->index or empty($pathinfo)) {
+        if ($uri == '/' or $uri == $this->defaultIndex or empty($pathinfo)) {
             $this->bootstrap->onRequest($request, $response);
             //无指定扩展名
         } elseif ($uri != '/' and $pathinfo != 'php' and is_file($file)) {

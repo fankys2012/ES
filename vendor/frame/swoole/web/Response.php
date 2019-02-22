@@ -50,7 +50,7 @@ class Response extends \frame\web\Response
         }
 
         $headers = $this->getHeaders();
-        if ($headers->count > 0) {
+        if (isset($headers->count) && $headers->count > 0) {
             foreach ($headers as $name => $values) {
                 $name = str_replace(' ', '-', ucwords(str_replace('-', ' ', $name)));
                 foreach ($values as $value) {

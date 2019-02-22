@@ -36,6 +36,11 @@ class Server
      * @var \api\swoole\SwooleBaseBootstrap
      */
     public $bootstrap;
+
+    /**
+     * @var string
+     */
+    public $defaultIndex = 'index.php';
     /**
      * @var string root directory
      */
@@ -156,6 +161,7 @@ class Server
 
     public function onWorkerStop(Swoole\Server $server,$worker_id)
     {
+        echo "onWorkerStop".PHP_EOL;
         if($this->bootstrap){
             $this->bootstrap->onWorkerStop($server,$worker_id);
         }
@@ -167,7 +173,7 @@ class Server
      */
     public function onShutdown(Swoole\Server $server)
     {
-        echo 'swoole server shutdown';
+        echo 'swoole server shutdown'.PHP_EOL;
     }
 
     /**
@@ -179,7 +185,7 @@ class Server
     {
         //低版本Linux内核和Mac OSX不支持进程重命名
         //@see https://wiki.swoole.com/wiki/page/125.html
-        echo "php $siteName :$channelName swoole process\r\n";
+        echo "php $siteName :$channelName swoole process".PHP_EOL;
         @swoole_set_process_name("php $siteName :$channelName swoole process");
     }
 
