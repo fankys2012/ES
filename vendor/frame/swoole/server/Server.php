@@ -201,9 +201,33 @@ class Server
 
     public static function run($cmd,$config,callable $func)
     {
+        $pidFile = $config['setting']['pid_file'];
+        $masterPid     = file_exists($pidFile) ? file_get_contents($pidFile) : null;
         if($cmd == 'start') {
+            if ($masterPid > 0 and posix_kill($masterPid,0)) {
+                print_r('Server is already running. Please stop it first.'.PHP_EOL);
+                exit;
+            }
             $server = Server::autoCreate($config);
             $func($server);
+        } elseif ($cmd == 'stop') {
+            if(!empty($masterPid)){
+                posix_kill($masterPid,SIGTERM);
+            }else{
+                print_r('master pid is null, maybe you delete the pid file we created. you can manually kill the master process with signal SIGTERM.'.PHP_EOL);
+            }
+            exit;
+        } elseif($cmd == 'reload') {
+            if(!empty($masterPid)) {
+                posix_kill($masterPid,SIGUSR1);// reload all worker
+            } else {
+                print_r('master pid is null, maybe you delete the pid file we created. you can manually kill the master process with signal SIGUSR1.'.PHP_EOL);
+            }
+            exit;
+        }
+        else {
+            echo 'comound not exists!'.PHP_EOL;
+            exit;
         }
     }
 }

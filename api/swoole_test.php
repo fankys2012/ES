@@ -22,15 +22,16 @@ $config = [
 //        'reactor_num' => 1,
 //        'worker_num' => 1,
 //        'task_worker_num' => 2,
-//        'pid_file' => __DIR__ . '/yii2-app-basic/runtime/testHttp.pid',
+        'pid_file' => __DIR__ . '/tmp/SwooleHttp.pid',
 //        'log_file' => __DIR__ . '/yii2-app-basic/runtime/logs/swoole.log',
 //        'debug_mode' => 0,
         'enable_coroutine' => COROUTINE_ENV
 
     ],
 ];
+$command = $argv[1] ?: 'start' ;
 
-Server::run('start',$config, function (Server $server) {
+Server::run($command,$config, function (Server $server) {
 
     $application = new api\swoole\SwooleWebBootstrap($server);
     $application->init = function (api\swoole\SwooleBaseBootstrap $bootstrap) {
