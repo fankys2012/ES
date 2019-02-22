@@ -86,9 +86,11 @@ class Base
         } elseif (strpos($className, '\\') !== false) {
             $classFile = static::getAlias('@' . str_replace('\\', '/', $className) . '.php', false);
             if ($classFile === false || !is_file($classFile)) {
+                echo $classFile."-{$className}\r\n";
                 return;
             }
         } else {
+            echo $className."\r\n";
             return;
         }
 

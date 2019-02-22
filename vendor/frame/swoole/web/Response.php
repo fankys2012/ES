@@ -59,7 +59,7 @@ class Response extends \frame\web\Response
             }
         }
         $this->swooleResponse->status($this->getStatusCode());
-        $this->sendCookies();
+//        $this->sendCookies();
     }
 
     /**

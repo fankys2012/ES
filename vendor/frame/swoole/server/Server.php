@@ -87,7 +87,6 @@ class Server
                     'Receive', 'Connect', 'Close', 'Timer', 'WorkerStop', 'WorkerError'];
                 break;
         }
-        print_r($this->setting);
         $this->swoole->set($this->setting);
 
         $this->swoole->on('Start',[$this,'onStart']);
@@ -125,9 +124,8 @@ class Server
      */
     public function onStart()
     {
-        echo "Server:onStart()";
-        swoole_set_process_name("swoole_http_server");
-//        $this->setProcessTitle($this->id,'master');
+//        swoole_set_process_name("swoole_http_server");
+        $this->setProcessTitle($this->id,'master');
     }
 
     /**
@@ -181,6 +179,7 @@ class Server
     {
         //低版本Linux内核和Mac OSX不支持进程重命名
         //@see https://wiki.swoole.com/wiki/page/125.html
+        echo "php $siteName :$channelName swoole process\r\n";
         @swoole_set_process_name("php $siteName :$channelName swoole process");
     }
 

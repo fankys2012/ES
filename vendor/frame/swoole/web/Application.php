@@ -21,5 +21,7 @@ class Application extends \frame\web\Application
     {
         $compontens = parent::coreComponents();
         $compontens['request'] = ['class' => 'frame\swoole\web\Request'];
+        $compontens['response'] = ['class' => 'frame\swoole\web\Response'];
+        return $compontens;
     }
 }

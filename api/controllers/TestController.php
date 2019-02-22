@@ -79,8 +79,8 @@ class TestController extends Controller
     public function testAction()
     {
         $newstr = '100600018746';
-        $newstr |=  "aaab";
-        echo $newstr;
-        return;
+//        $newstr |=  "aaab";
+//        echo $newstr;
+        return $newstr;
     }
 }

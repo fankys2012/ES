@@ -9,6 +9,7 @@
 namespace api\swoole;
 
 
+use frame\Base;
 use frame\Log;
 
 abstract class SwooleBaseBootstrap
@@ -21,6 +22,11 @@ abstract class SwooleBaseBootstrap
     protected $workId;
 
     public $appConfig;
+
+    /**
+     * @var Container
+     */
+    protected static $container;
 
     /**
      * @var callable
@@ -45,6 +51,13 @@ abstract class SwooleBaseBootstrap
     public function onWorkerStart($server,$workerId)
     {
         $this->workId = $workerId;
+        $initFunc = $this->init;
+        if ($initFunc instanceof \Closure) {
+            $initFunc($this);
+        }
+        self::$container = new \frame\di\Container();
+        Base::$container = self::$container;
+//        \frame\Log::setLogger(self::$container->get('frame\log\Logger'));
     }
 
 

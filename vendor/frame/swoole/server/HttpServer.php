@@ -16,20 +16,15 @@ class HttpServer extends Server
         $uri = $request->server['request_uri'];
         $file = APP_DIR . $uri;
         $pathinfo = pathinfo($file, PATHINFO_EXTENSION);
-        print_r($uri);
-        print_r($pathinfo);
         if ($uri == '/' or $uri == $this->index or empty($pathinfo)) {
-            echo "frame file";
             $this->bootstrap->onRequest($request, $response);
             //无指定扩展名
         } elseif ($uri != '/' and $pathinfo != 'php' and is_file($file)) {
             // 非php文件, 最好使用nginx来输出
 //            $response->header('Content-Type', FileHelper::getMimeTypeByExtension($file));
-            echo "static file";
             $response->sendfile($file);
         } elseif ($uri != '/' && $uri != $this->index) {
             //站点目录下的其他PHP文件
-            echo "php file";
             $this->handleDynamic($file, $request, $response);
         }
     }

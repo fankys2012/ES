@@ -9,13 +9,9 @@
 use frame\swoole\server\Server;
 
 require_once (__DIR__ . '/../vendor/autoload.php');
-require_once (__DIR__ . '/../vendor/frame/Init.php');
+require_once (__DIR__ . '/../vendor/frame/SwooleInit.php');
 define('APP_DIR',__DIR__);
-
-$arr_config = frame\helpers\ArrayHelper::merge(
-    require(__DIR__ . '/config/main.php'),
-    require (__DIR__ . '/config/config.php')
-);
+\frame\Base::setAlias('@api', dirname(__DIR__) . '/api');
 
 $config = [
     'class' => 'frame\swoole\server\HttpServer',
@@ -36,7 +32,18 @@ $config = [
 
 Server::run('start',$config, function (Server $server) {
 
-    $application = new \api\swoole\SwooleWebBootstrap($server);
+    $application = new api\swoole\SwooleWebBootstrap($server);
+    $application->init = function (api\swoole\SwooleBaseBootstrap $bootstrap) {
+        require_once (__DIR__ . '/../vendor/autoload.php');
+//        require_once (__DIR__ . '/../vendor/frame/Init.php');
+
+        $arr_config = frame\helpers\ArrayHelper::merge(
+            require(__DIR__ . '/config/main.php'),
+            require (__DIR__ . '/config/config.php')
+        );
+        $bootstrap->appConfig = $arr_config;
+        echo "init func \r\n";
+    };
     //如果需要swoole Server
     $server->getSwoole()->on("Task", function (swoole_server $serv, $task_id, $from_id, $data) {
         echo "Tasker进程接收到数据";

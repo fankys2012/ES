@@ -63,6 +63,7 @@ return [
 
     'frame\swoole\web\Application' => FRAME_PATH . '/swoole/web/Application.php',
     'frame\swoole\web\Request' => FRAME_PATH . '/swoole/web/Request.php',
+    'frame\swoole\web\Response' => FRAME_PATH . '/swoole/web/Response.php',
     'frame\swoole\server\Server' => FRAME_PATH . '/swoole/server/Server.php',
     'frame\swoole\server\HttpServer' => FRAME_PATH . '/swoole/server/HttpServer.php',
 ];
