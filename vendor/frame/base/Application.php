@@ -91,5 +91,14 @@ abstract class Application extends Module
         ];
     }
 
+    /**
+     * Returns the log dispatcher component.
+     * @return \frame\log\Dispatcher the log dispatcher application component.
+     */
+    public function getLog()
+    {
+        return $this->get('log');
+    }
+
 
 }

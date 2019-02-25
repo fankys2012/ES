@@ -143,7 +143,6 @@ class Logger extends Component
      */
     public function flush($final = false)
     {
-
         $messages = $this->messages;
         $this->messages = [];
         if ($this->dispatcher instanceof Dispatcher) {

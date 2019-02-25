@@ -9,6 +9,7 @@
 namespace api\swoole;
 
 
+use frame\base\Event;
 use frame\swoole\web\Application;
 
 class SwooleWebBootstrap extends SwooleBaseBootstrap
@@ -19,15 +20,25 @@ class SwooleWebBootstrap extends SwooleBaseBootstrap
         $application = new Application($this->appConfig);
         $application->getRequest()->setSwooleReques($resquest);
         $application->getResponse()->setSwooleResponse($response);
-
+        $application->on(Application::EVENT_AFTER_ACTION,[$this,'onRequestEnd']);
         try{
             $reponse = $application->handleRequest($application->getRequest());
             $reponse->send();
+            $application->trigger(Application::EVENT_AFTER_ACTION);
             return $reponse->exitStatus;
         }
         catch (\Exception $e) {
 
         }
 
+    }
+
+    public function onRequestEnd(Event $event)
+    {
+        /**
+         * @var Application $application
+         */
+        $application = $event->sender;
+        $application->getLog()->getLogger()->flush(true);
     }
 }
