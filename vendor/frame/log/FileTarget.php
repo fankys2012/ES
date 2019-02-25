@@ -48,18 +48,26 @@ class FileTarget extends Target
         } else {
             $this->traceCode = FRAME_BEGIN_TIME.mt_rand(1000,9999);
         }
+        $this->createLogFile();
 
+    }
+
+    /**
+     * 在swoole模式下 Log对象为常驻内存，故在onReques 时必须重新设置log
+     */
+    public function createLogFile()
+    {
         if(isset(Base::$app->params['logPath']) && Base::$app->params['logPath']) {
             $logPath = Base::$app->params['logPath'];
         } else {
             $logPath = dirname(dirname(FRAME_PATH)).'/tmp/log';
         }
-
-        $logPath .= "/".date('Ym',FRAME_DATE_TIME)."/".date('d',FRAME_DATE_TIME);
+        $currTime = time();
+        $logPath .= "/".date('Ym',$currTime)."/".date('d',$currTime);
         if(!is_dir($logPath)){
             FileHelper::createDirectory($logPath,$this->dirMode,true);
         }
-        $intTime=FRAME_DATE_TIME - (FRAME_DATE_TIME % 300);
+        $intTime=$currTime - ($currTime % 300);
         $this->logFile = $logPath .'/'.date("Ymd", $intTime).'T'.date("His",$intTime).'.log';
 
 

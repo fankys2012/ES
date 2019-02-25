@@ -184,4 +184,6 @@ abstract class Target extends Component
     {
 
     }
+
+    public function createLogFile(){}
 }

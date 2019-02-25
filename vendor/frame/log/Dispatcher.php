@@ -127,4 +127,13 @@ class Dispatcher extends Component
         }
     }
 
+    public function createLogFile()
+    {
+        foreach ($this->targets as $target) {
+            if ($target->enabled) {
+                $target->createLogFile();
+            }
+        }
+    }
+
 }
