@@ -48,20 +48,15 @@ class FileTarget extends Target
         } else {
             $this->traceCode = FRAME_BEGIN_TIME.mt_rand(1000,9999);
         }
-        $this->createLogFile();
-
-    }
-
-    /**
-     * 在swoole模式下 Log对象为常驻内存，故在onReques 时必须重新设置log
-     */
-    public function createLogFile()
-    {
         if(isset(Base::$app->params['logPath']) && Base::$app->params['logPath']) {
             $logPath = Base::$app->params['logPath'];
         } else {
             $logPath = dirname(dirname(FRAME_PATH)).'/tmp/log';
         }
+
+        /**
+         * 在swoole 模式下，预定义的常量是常驻内存的，获取的时间是swoole server 启动时间
+         */
         $currTime = time();
         $logPath .= "/".date('Ym',$currTime)."/".date('d',$currTime);
         if(!is_dir($logPath)){
@@ -77,6 +72,7 @@ class FileTarget extends Target
         if ($this->maxFileSize < 1) {
             $this->maxFileSize = 1;
         }
+
     }
 
 

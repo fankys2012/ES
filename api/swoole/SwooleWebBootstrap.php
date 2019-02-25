@@ -18,8 +18,7 @@ class SwooleWebBootstrap extends SwooleBaseBootstrap
     public function handleRequest($resquest, $response)
     {
         $application = new Application($this->appConfig);
-        //在 file 日志模式下重新创建日志文件
-        $application->getLog()->createLogFile();
+
         $application->getRequest()->setSwooleReques($resquest);
         $application->getResponse()->setSwooleResponse($response);
         $application->on(Application::EVENT_AFTER_ACTION,[$this,'onRequestEnd']);
