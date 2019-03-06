@@ -9,8 +9,8 @@ return [
     'params'=>[
         //elasticsearch address
         'es' => [
-//            '192.168.56.120:9200',
-            '192.168.95.99:9200'
+            '192.168.56.120:9200',
+//            '192.168.95.99:9200'
         ],
         'es_log_level'=>100,// DEBUG：100 ；INFO：200 ；NOTICE：250；WARNING：300；ERROR：400；ALERT：550
         'redis'=>[

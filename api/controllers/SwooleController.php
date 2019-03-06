@@ -9,14 +9,22 @@
 namespace api\controllers;
 
 
+use api\util\DoubleLink;
 use frame\Log;
 use frame\web\Controller;
+
 
 class SwooleController extends Controller
 {
     public function goAction()
     {
-        return "go Action()";
+        $doubleLink = new DoubleLink();
+        $doubleLink->add('1');
+        $doubleLink->add('2');
+        $doubleLink->append('3');
+        $doubleLink->append('4');
+        echo "<pre>";
+        print_r($doubleLink);
     }
 
     public function coroutineAction()

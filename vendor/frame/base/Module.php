@@ -182,7 +182,6 @@ class Module extends ServiceLocator
             $id .= '/' . substr($route, 0, $pos);
             $route = substr($route, $pos + 1);
         }
-
         $controller = $this->createControllerByID($id);
         if ($controller === null && $route !== '') {
             $controller = $this->createControllerByID($id . '/' . $route);
