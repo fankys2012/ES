@@ -59,10 +59,10 @@ class ServiceLocator extends Component
             if (isset($definition['class'])) {
                 $this->_definitions[$id] = $definition;
             } else {
-//                throw new InvalidConfigException("The configuration for the \"$id\" component must contain a \"class\" element.");
+                throw new InvalidConfigException("The configuration for the \"$id\" component must contain a \"class\" element.");
             }
         } else {
-//            throw new InvalidConfigException("Unexpected configuration type for the \"$id\" component: " . gettype($definition));
+            throw new InvalidConfigException("Unexpected configuration type for the \"$id\" component: " . gettype($definition));
         }
     }
 

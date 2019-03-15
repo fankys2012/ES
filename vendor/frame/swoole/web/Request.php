@@ -17,25 +17,7 @@ class Request extends \frame\web\Request
 
     private $_bodyParams;
 
-    /**
-     * @var array the parsers for converting the raw HTTP request body into [[bodyParams]].
-     * The array keys are the request `Content-Types`, and the array values are the
-     * corresponding configurations for [[Base::createObject|creating the parser objects]].
-     * A parser must implement the [[RequestParserInterface]].
-     *
-     * To enable parsing for JSON requests you can use the [[JsonParser]] class like in the following example:
-     *
-     * ```
-     * [
-     *     'application/json' => 'Base\web\JsonParser',
-     * ]
-     * ```
-     *
-     * To register a parser for parsing all request types you can use `'*'` as the array key.
-     * This one will be used as a fallback in case no other types match.
-     *
-     * @see getBodyParams()
-     */
+
     public $parsers = [];
 
     private $_rawBody;
@@ -48,6 +30,7 @@ class Request extends \frame\web\Request
     public function setSwooleReques($request)
     {
         $this->swooleRequest = $request;
+        $this->clear();
     }
 
     public function resolve()
@@ -87,19 +70,7 @@ class Request extends \frame\web\Request
                 // e.g. application/json; charset=UTF-8
                 $contentType = substr($contentType, 0, $pos);
             }
-            if (isset($this->parsers[$contentType])) {
-                $parser = Base::createObject($this->parsers[$contentType]);
-                if (!($parser instanceof RequestParserInterface)) {
-                    throw new InvalidConfigException("The '$contentType' request parser is invalid. It must implement the yii\\web\\RequestParserInterface.");
-                }
-                $this->_bodyParams = $parser->parse($this->getRawBody(), $contentType);
-            } elseif (isset($this->parsers['*'])) {
-                $parser = Base::createObject($this->parsers['*']);
-                if (!($parser instanceof RequestParserInterface)) {
-                    throw new InvalidConfigException("The fallback request parser is invalid. It must implement the yii\\web\\RequestParserInterface.");
-                }
-                $this->_bodyParams = $parser->parse($this->getRawBody(), $contentType);
-            } elseif ($this->getMethod() === 'POST') {
+            if ($this->getMethod() === 'POST') {
                 // PHP has already parsed the body so we have all params in $this->swoole->post
                 $this->_bodyParams = $this->swooleRequest->post;
             } else {
@@ -116,5 +87,28 @@ class Request extends \frame\web\Request
             $this->_rawBody = $this->swooleRequest->rawContent();
         }
         return $this->_rawBody;
+    }
+
+    public function getMethod()
+    {
+        if (isset($this->swooleRequest->post[$this->methodParam])) {
+            return strtoupper($this->swooleRequest->post[$this->methodParam]);
+        }
+
+        if (isset($this->swooleRequest->server['REQUEST_METHOD'])) {
+            return strtoupper($this->swooleRequest->server['REQUEST_METHOD']);
+        }
+
+        return 'GET';
+    }
+
+    /**
+     * 清理变量
+     */
+    public function clear()
+    {
+        $this->_bodyParams = null;
+        $this->_queryParams = null;
+        $this->_rawBody = null;
     }
 }

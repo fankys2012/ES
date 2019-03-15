@@ -486,9 +486,9 @@ class MediaAssetsDoc
                     $list[$item['_id']] = $item['_source'];
                 }
             }
-            return ['ret'=>0,'data'=>$list];
+            return ['ret'=>0,'reason'=>'','data'=>$list];
         }
-        return ['ret'=>1,'reason'=>'get failed'];
+        return ['ret'=>1,'reason'=>'get failed','data'=>[]];
     }
 
     /**

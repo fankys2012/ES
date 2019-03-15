@@ -27,6 +27,7 @@ return [
     'frame\base\RequestParserInterface' => FRAME_PATH . '/base/RequestParserInterface.php',
     'frame\base\Response' => FRAME_PATH . '/base/Response.php',
     'frame\base\Event' => FRAME_PATH . '/base/Event.php',
+    'frame\base\ErrorHandler' => FRAME_PATH . '/base/ErrorHandler.php',
 
     'frame\di\ServiceLocator' => FRAME_PATH . '/di/ServiceLocator.php',
     'frame\di\Container' => FRAME_PATH . '/di/Container.php',

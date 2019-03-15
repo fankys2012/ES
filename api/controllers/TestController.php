@@ -13,6 +13,7 @@ use api\logic\ClickSyncLogic;
 use api\logic\ESLogic;
 use api\logic\KeywordsLogic;
 use api\logic\MediaAssetsLogic;
+use api\util\CacheRedis;
 use frame\Base;
 use frame\helpers\BaseVarDumper;
 use frame\helpers\FtpClient;
@@ -78,9 +79,20 @@ class TestController extends Controller
 
     public function testAction()
     {
+
+        $post_data = Base::$app->request->getParam('post_data');
         $newstr = '100600018749';
+        echo $mysetr;
 //        $newstr |=  "aaab";
 //        echo $newstr;
         return $newstr;
+    }
+
+    public function redisAction()
+    {
+        $redisClient = CacheRedis::getInstance();
+        $luaScript = file_get_contents(APP_DIR.'/config/test.lua');
+        $res = $redisClient->eval($luaScript,array('keyword','key2','72665554668a4d8e1a35c5b511fb507b','second'),2);
+        var_dump($res);
     }
 }

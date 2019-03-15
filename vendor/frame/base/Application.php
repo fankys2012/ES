@@ -22,7 +22,10 @@ abstract class Application extends Module
     {
         Base::$app = $this;
         $this->preinit($config);
+        //注册错误方法
+
         Component::__construct($config);
+//        $this->getErrorHandler()->register();
     }
     abstract public function handleRequest($request);
 
@@ -88,6 +91,7 @@ abstract class Application extends Module
     {
         return [
             'log' => ['class' => 'frame\log\Dispatcher'],
+            'errorHandler' => ['class' => 'frame\base\ErrorHandler'],
         ];
     }
 
@@ -98,6 +102,11 @@ abstract class Application extends Module
     public function getLog()
     {
         return $this->get('log');
+    }
+
+    public function getErrorHandler()
+    {
+        return $this->get('errorHandler');
     }
 
 

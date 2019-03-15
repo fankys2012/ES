@@ -55,22 +55,48 @@ class Application extends \frame\base\Application
      */
     public function handleRequest($request)
     {
-        list ($route, $params) = $request->resolve();
-        $this->requestedRoute = $route;
-        $result = $this->runAction($route, $params);
-//        if ($result instanceof Response) {
-//            return $result;
-//        } else {
-//            $response = $this->getResponse();
-//            $response->exitStatus = $result;
-//
-//            return $response;
-//        }
+//        list ($route, $params) = $request->resolve();
+//        $this->requestedRoute = $route;
+//        $result = $this->runAction($route, $params);
+
+        if (empty($this->catchAll)) {
+            list ($route, $params) = $request->resolve();
+        } else {
+            $route = $this->catchAll[0];
+            $params = $this->catchAll;
+            unset($params[0]);
+        }
+        try {
+            $this->requestedRoute = $route;
+            $result = $this->runAction($route, $params);
+            if ($result instanceof Response) {
+                return $result;
+            } else {
+                $response = $this->getResponse();
+                if ($result !== null) {
+                    $response->data = $result;
+                }
+
+                return $response;
+            }
+
+        } catch ( InvalidCallException $e) {
+            throw new NotFoundHttpException('Page not found', $e->getCode(), $e);
+        }
     }
 
     public function getRequest()
     {
         return $this->get('request');
+    }
+
+    /**
+     * Returns the response component.
+     * @return Response the response component.
+     */
+    public function getResponse()
+    {
+        return $this->get('response');
     }
 
     /**
@@ -80,6 +106,7 @@ class Application extends \frame\base\Application
     {
         return array_merge(parent::coreComponents(), [
             'request' => ['class' => 'frame\console\Request'],
+            'response' => ['class' => 'frame\web\Response'],
         ]);
     }
 }
