@@ -82,10 +82,16 @@ class TestController extends Controller
 
         $post_data = Base::$app->request->getParam('post_data');
         $newstr = '100600018749';
-        echo $mysetr;
+        echo "1:".decbin(1)."<br>";
+        echo "2:".decbin(2)."<br>";
+        echo "3:".decbin(3)."<br>";
+        echo "4:".decbin(4)."<br>";
+        $a = 1;
+        $b = 2;
+        echo $a & $b;
 //        $newstr |=  "aaab";
 //        echo $newstr;
-        return $newstr;
+//        return $newstr;
     }
 
     public function redisAction()
